@@ -7,6 +7,7 @@ let globalFilterData = [];
 let sortState = { col: null, dir: "asc" };
 let sortedLedger = [];
 let currencySymbol = "";
+let hasUnsavedChanges = false;
 const SETTINGS_KEY = "vaultSettings";
 
 function loadSettingsValues() {
@@ -387,6 +388,8 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
   renderTable();
   renderCharts(ledger);
   clearFilters();
+  transactions.push(txn);
+hasUnsavedChanges = true;
 });
 
 function clearEntry() {
@@ -474,6 +477,8 @@ function editEntry(id) {
   saveToLocalStorage();
   saveLastState();
   renderCharts(ledger);
+  transactions.push(txn);
+  hasUnsavedChanges = true;
 }
 
 function deleteEntry(id, desc) {
@@ -499,6 +504,8 @@ function deleteEntry(id, desc) {
     renderTable();
     applyFilters();
     renderCharts(ledger);
+    transactions.push(txn);
+hasUnsavedChanges = true;
   }
 }
 
@@ -2109,12 +2116,29 @@ function refreshReports() {
   buildFilterAccounts();
 }
 
-
+/*
 window.addEventListener("beforeunload", function() {
   if (!getSetting("autoDownload", false)) return;
   downloadAllLedgers("json");
 });
+*/
+  
+window.addEventListener("beforeunload", function() {
+  if (!getSetting("autoDownload", false)) return;
+  
+  const currentCount = transactions.length;
+  const lastSavedCount = parseInt(localStorage.getItem("lastSavedTxnCount") || "0");
+  
+  // only download if new transactions were added
+  if (currentCount > lastSavedCount) {
+    downloadAllLedgers("json");
+    localStorage.setItem("lastSavedTxnCount", currentCount);
+  }
+});
 
+function updateTxnCount() {
+  localStorage.setItem("lastSavedTxnCount", transactions.length);
+}
 
 
 function scrollToTop(top = 0) {
