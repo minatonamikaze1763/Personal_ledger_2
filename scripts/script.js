@@ -2130,14 +2130,7 @@ window.addEventListener("beforeunload", function() {
 window.addEventListener("beforeunload", function() {
   if (!getSetting("autoDownload", false)) return;
   
-  const currentCount = transactions.length;
-  const lastSavedCount = parseInt(localStorage.getItem("lastSavedTxnCount") || "0");
-  
-  // only download if new transactions were added
-  if (currentCount > lastSavedCount) {
-    downloadAllLedgers("json");
-    localStorage.setItem("lastSavedTxnCount", currentCount);
-  }
+  if (hasUnsavedChanges) downloadAllLedgers("json");
 });
 
 function updateTxnCount() {
