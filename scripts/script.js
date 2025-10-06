@@ -388,7 +388,8 @@ document.getElementById("entryForm").addEventListener("submit", async function(e
   renderTable();
   renderCharts(ledger);
   clearFilters();
-  transactions.push(txn);
+  
+transactions.push(1);
 hasUnsavedChanges = true;
 });
 
@@ -437,7 +438,8 @@ function linkedModify(id, entry, action) {
   // Save both back
   localStorage.setItem(entry.transferredFrom, JSON.stringify(fromLedger));
   localStorage.setItem(entry.transferredTo, JSON.stringify(toLedger));
-  
+  transactions.push(1);
+hasUnsavedChanges = true;
   // Refresh in-memory ledger
   if (currentLedgerKey === entry.transferredFrom) {
     ledger = fromLedger;
@@ -477,8 +479,8 @@ function editEntry(id) {
   saveToLocalStorage();
   saveLastState();
   renderCharts(ledger);
-  transactions.push(txn);
-  hasUnsavedChanges = true;
+  transactions.push(1);
+hasUnsavedChanges = true;
 }
 
 function deleteEntry(id, desc) {
@@ -504,8 +506,8 @@ function deleteEntry(id, desc) {
     renderTable();
     applyFilters();
     renderCharts(ledger);
-    transactions.push(txn);
-hasUnsavedChanges = true;
+    transactions.push(1);
+    hasUnsavedChanges = true;
   }
 }
 
@@ -1840,6 +1842,8 @@ function deleteLedger(ledgerName) {
   ledgerSelect.value = currentLedgerKey; // ← set selected <option>
   updateLedgerSelect();
   document.getElementById("filename").value = fileName; // ← update filename input
+  transactions.push(1);
+hasUnsavedChanges = true;
 }
 document.getElementById("deleteLedgerBtn").addEventListener("click", () => {
   if (!currentLedgerKey) return alert("No ledger selected to delete.");
