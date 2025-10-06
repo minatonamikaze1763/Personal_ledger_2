@@ -1,0 +1,93 @@
+/* ==== SETTINGS FORM STYLES ==== */
+#settingsContainer {
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fdfdfd;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-family: system-ui, sans-serif;
+}
+
+/* Each setting block */
+#settingsContainer div {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 15px;
+  transition: box-shadow 0.2s;
+}
+#settingsContainer div:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Labels */
+#settingsContainer label {
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  color: #1a202c;
+  padding: .7rem .3rem;
+}
+
+/* Inputs */
+#settingsContainer input[type="text"],
+#settingsContainer input[type="number"],
+#settingsContainer select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 6px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+#settingsContainer input:focus,
+#settingsContainer select:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 2px rgba(49,130,206,0.25);
+  outline: none;
+}
+
+/* Checkboxes */
+#settingsContainer input[type="checkbox"] {
+  margin-right: 8px;
+  width: max-content;
+  transform: scale(1.2);
+  accent-color: #3182ce;
+}
+#settingsContainer label input[type="checkbox"] {
+  display: inline-block;
+}
+
+/* Descriptions */
+#settingsContainer p {
+  font-size: 12px;
+  color: #4a5568;
+  margin: 0;
+}
+
+/* Save Button */
+#settingsContainer button {
+  display: block;
+  margin: 15px auto 0;
+  padding: 10px 18px;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+#settingsContainer button:hover {
+  background: #2b6cb0;
+}
+#settingsContainer button:active {
+  transform: scale(0.97);
+}

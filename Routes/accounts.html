@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <script src="../scripts/auth.js"></script>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accounts</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+  <link rel="stylesheet" href="../styles/reports.css" />
+  <link rel="stylesheet" href="../styles/accounts.css" />
+
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../Routes/author.html">Author</a></li>
+      <li><a href="../Routes/docs.html" class="">Docs</a></li>
+      <li><a href="../Routes/reports.html" class="">Reports</a></li>
+      <li><a href="../Routes/transfer.html">Transfer</a></li>
+      <li><a href="../Routes/accounts.html" class="active">Accounts</a></li>
+      <li><a href="../Routes/settings.html" class="">Settings</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Theme Selector -->
+  <div class="theme-selector" style="display: none;">
+    <label for="themeSelect">🎨 Theme:</label>
+    <select id="themeSelect">
+      <option value="light">🌞 Light</option>
+      <option value="dark">🌙 Dark</option>
+      <option value="blue">🔵 Blue</option>
+      <option value="green">🟢 Green</option>
+      <option value="sunset">🌅 Sunset</option>
+      <option value="neon">💡 Neon</option>
+      <option value="pastel">🎨 Pastel</option>
+      <option value="coffee">☕ Coffee</option>
+      <option value="solarized">🌐 Solarized</option>
+      <option value="purple">💜 Purple</option>
+      <option value="mono">⚪ Mono</option>
+      <option value="gradient">🌈 Gradient</option>
+      <option value="rose">🌹 Rose</option>
+      <option value="aqua">💧 Aqua</option>
+      <option value="forest">🌲 Forest</option>
+      <option value="gold">🥇 Gold</option>
+      <option value="silver">🥈 Silver</option>
+      <option value="crimson">❤️ Crimson</option>
+      <option value="indigo">🔮 Indigo</option>
+      <option value="cyberpunk">⚡ Cyberpunk</option>
+    </select>
+  </div>
+  <header class="page-header">
+  <h1> Accounts Overview</h1>
+  <p>
+    Manage and review all your accounts across ledgers.
+    Use the filters below to generate detailed reports and track account-wise transactions in one place.
+  </p>
+</header>
+  <!-- Filters -->
+  <section class="report-filter">
+    <h3><i class="fa-solid fa-filter"></i> Transaction Filter</h3>
+    
+    <div class="report-filter-dropdowns">
+        <label for="accountSelect">Select Accounts:</label>
+        <select id="accountSelect" class="report-dropdown" multiple>
+          <!-- JS will populate accounts -->
+        </select>
+        <label for="ledgerSelect">Select Ledgers:</label>
+        <select id="ledgerSelect" class="report-dropdown" multiple>
+          <!-- JS will populate ledgers -->
+        </select>
+    </div>
+    
+    <button class="report-btn" id="generateTransactionReport">
+      <i class="fa-solid fa-table"></i> Show Transactions
+    </button>
+  </section>
+  
+  <!-- Transactions Table -->
+  <section class="report-table-section">
+    <table class="report-table" id="transactionTable">
+      <thead>
+        <tr>
+          <th>Sl.No</th>
+          <th>Ledger</th>
+          <th>Account</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populated by JS -->
+      </tbody>
+    </table>
+  </section>
+   <button id="downloadTransactionsPngBtn" class="export-btn">
+   <i class="fa-solid fa-image"></i> Download as PNG
+ </button>
+ </section>
+  <script src="../scripts/accounts.js"></script>
+  <script src="../scripts/utilitys.js"></script>
+</body>
+
+</html>

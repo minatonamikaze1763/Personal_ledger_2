@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vault Ledger</title>
+  <link rel="manifest" href="manifest.json" />
+  <!-- Description -->
+  <meta name="description" content="Track your expenses, income, and closing balances easily with this personal ledger web app. Import/Export data, visualize with charts, and stay in control of your finances." />
+  
+  <!-- Author -->
+  <meta name="author" content="Nandhu Adepu" />
+  
+  <!-- Keywords -->
+  <meta name="keywords" content="personal ledger, expense tracker, money manager, finance tracker, budget app, ledger app, income expense, financial app" />
+  
+  <!-- Theme color (for mobile browsers) -->
+  <meta name="theme-color" content="#6a0dad" />
+  
+  <!-- Open Graph (Facebook & social media preview) -->
+  <meta property="og:title" content="My Personal Ledger" />
+  <meta property="og:description" content="A sleek, private, and easy-to-use web app to manage your daily finances with charts and export features." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cuber-dev.github.io/Personal_ledger/" />
+  <meta property="og:image" content="logo.png" />
+  
+  <!-- Favicon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+  <link rel="icon" href="images/logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <!-- Add in your <head> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Add JSZip and FileSaver -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="styles/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <!-- Add inside body (preferably at top) -->
+  <nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="Routes/author.html">Author</a></li>
+      <li><a href="Routes/docs.html">Docs</a></li>
+      <li><a href="Routes/reports.html">Reports</a></li>
+      <li><a href="Routes/transfer.html" class="">Transfer</a></li>
+      <li><a href="Routes/accounts.html" class="">Accounts</a></li>
+      
+      <li><a href="Routes/settings.html" class="">Settings</a></li>
+    </ul>
+  </nav>
+  <div class="theme-selector" style="display: none;">
+    <label for="themeSelect">🎨 Theme:</label>
+    <select id="themeSelect">
+      <option value="light">🌞 Light</option>
+      <option value="dark">🌙 Dark</option>
+      <option value="blue">🔵 Blue</option>
+      <option value="green">🟢 Green</option>
+      <option value="sunset">🌅 Sunset</option>
+      <option value="neon">💡 Neon</option>
+      <option value="pastel">🎨 Pastel</option>
+      <option value="coffee">☕ Coffee</option>
+      <option value="solarized">🌐 Solarized</option>
+      <option value="purple">💜 Purple</option>
+      <option value="mono">⚪ Mono</option>
+      <option value="gradient">🌈 Gradient</option>
+      <option value="rose">🌹 Rose</option>
+      <option value="aqua">💧 Aqua</option>
+      <option value="forest">🌲 Forest</option>
+      <option value="gold">🥇 Gold</option>
+      <option value="silver">🥈 Silver</option>
+      <option value="crimson">❤️ Crimson</option>
+      <option value="indigo">🔮 Indigo</option>
+      <option value="cyberpunk">⚡ Cyberpunk</option>
+    </select>
+  </div>
+  <header class="card">
+    <h1>Vault Ledger</h1>
+    <p>
+      A secure and organized way to manage your personal and business accounts.
+      Track transactions, monitor balances, and gain insights with powerful charts and reports — all in one place.
+    </p>
+    <p>
+      NOTE: You can modify ledger's settings in Settings Page...
+    </p>
+  </header>
+  
+  <!-- Floating Add Button (Mobile Only) -->
+  <button id="scrollTopBtn" class="scroll-top-btn hide" onclick="focusInput()">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+  <div class="entry-section white-card">
+    <div class="form-row" style="display:none;">
+      <label for="ledgerName">Ledger Name:</label>
+      <input type="text" id="filename" placeholder="Untitled" value="Untitled" maxlength="26" disabled />
+    </div>
+    <div class="form-row">
+      <label for="ledgerSelect">Selected Ledger:</label>
+      <select id="ledgerSelect">
+        <option value="">Untitled</option>
+      </select>
+    </div>
+    
+    <button class="primary-button" id="newLedgerBtn"><i class="fa-solid fa-plus"></i> New Ledger</button>
+    <button id="deleteLedgerBtn" class="primary-button delete-btn">Delete Current Ledger</button>
+    
+  </div>
+  <form id="entryForm">
+    <label for="desc"><i class="fa-solid fa-pencil"></i> Add Transaction:</label>
+    <div class="account-container">
+      <select id="account" required>
+        <option value="Select Account">Select Account</option>
+      </select>
+    </div>
+    <div class="inputs-container">
+      
+      <input type="date" id="date" required />
+      <input type="text" id="desc" placeholder="Description" required />
+      <input type="number" id="amount" placeholder="Amount" step="0.1" min="0.1" required />
+      <select id="type">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+    </div>
+    
+    <button class="submit" type="submit">Add Entry</button>
+    <button id="clearEntryBtn" type="button" onclick="clearEntry()" class=" delete-btn">Clear Entry</button>
+  </form>
+  
+  <!-- Wealth Light Section -->
+  <div class="wealth-light-section card">
+    <h2><i class="fa-solid fa-wallet"></i> Wealth Indicator</h2>
+    <div id="wealthLight" class="wealth-light">
+    </div>
+    <p id="wealthTitle"></p>
+    <div class="summary" id="balance">Balance : 0.00</div>
+  </div>
+  
+  <hr />
+  <label>Import JSON or ZIP File: </label>
+  <label for="file-input" class="import-label"><i class="fa-solid fa-file"></i> Import Data</label>
+  <input type="file" class="import-btn" id="file-input" onchange="handleImport(event)" accept=".json,.csv,.txt,.xls,.xlsx,.pdf,.zip" hidden />
+  <!-- <button id="importDriveBtn" class="import-btn" onclick="importLedgerFromDrive()">Import from Google Drive</button> -->
+  
+  <br />
+  <br />
+  
+  <label>Export or download File: </label>
+  <div class="export-container">
+    <select id="exportFormat" class="export-select">
+      <option value="json">📑 JSON</option>
+      <option value="excel">📊 Excel</option>
+      <option value="pdf">📄 PDF</option>
+      <option value="png">🖼️ PNG</option>
+    </select>
+    <button class="export-btn" onclick="handleExport()">
+      <i class="fa-solid fa-download"></i> Download Table Data
+    </button>
+    <button class="export-btn" onclick="downloadAllLedgers()">
+      <i class="fa-solid fa-download"></i> All Ledgers as ZIP
+    </button>
+    
+    <!-- Google Drive Integration Buttons -->
+    <!-- <button id="exportDriveBtn" class="export-btn" onclick="exportLedgerToDrive()">Export to Google Drive</button> -->
+  </div>
+  
+  <!-- Filter Section -->
+  <div id="filterSection" class="filter-section">
+    <label><strong><i class="fa-solid fa-filter"></i> Filter:</strong></label>
+    
+    <div class="filter-row">
+      <input type="text" id="searchDesc" placeholder="Search Description" oninput="applyFilters()" />
+    </div>
+    
+    <div class="filter-row">
+      <select id="filterType" onchange="applyFilters()">
+        <option value="">All Types</option>
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+    </div>
+    <div class="filter-row">
+      <select id="filter-accounts" onchange="applyFilters()">
+        <option value="">All</option>
+      </select>
+    </div>
+    
+    <div class="filter-row">
+      <input type="number" id="minAmount" placeholder="Min Amount" step="0.01" oninput="applyFilters()" />
+      <input type="number" id="maxAmount" placeholder="Max Amount" step="0.01" oninput="applyFilters()" />
+    </div>
+    
+    <!--     <div class="filter-row date-labels">
+  <label for="startDate">From Date</label>
+  <label for="endDate">To Date</label>
+</div>
+
+<div class="filter-row">
+  <input type="date" id="startDate" onchange="applyFilters()" />
+  <input type="date" id="endDate" onchange="applyFilters()" />
+</div>
+ -->
+    <div class="filter-row">
+      <label for="dateRange"><b>Date Range</b></label>
+      <select id="dateRange" onchange="handleDateRangeChange()" class="filter-input">
+        <option value="custom">Custom</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="thisWeek">Current Week</option>
+        <option value="prevWeek">Previous Week</option>
+        <option value="thisMonth" selected>Current Month</option>
+        <option value="prevMonth">Previous Month</option>
+        <option value="thisQuarter">Current Quarter</option>
+        <option value="prevQuarter">Previous Quarter</option>
+        <option value="thisHalfYear">Current Half Year</option>
+        <option value="prevHalfYear">Previous Half Year</option>
+        <option value="thisFY">Current Financial Year</option>
+        <option value="prevFY">Previous Financial Year</option>
+        <option value="thisCY">Current Calendar Year</option>
+        <option value="prevCY">Previous Calendar Year</option>
+        <option value="tillDate">Till Date</option>
+      </select>
+    </div>
+    
+    <!-- Wrap custom date fields -->
+    <div id="customDateFields" style="display:none;">
+      <div class="filter-row date-labels">
+        <label for="startDate">From Date</label>
+        <label for="endDate">To Date</label>
+      </div>
+      
+      <div class="filter-row">
+        <input type="date" id="startDate" onchange="applyFilters()" />
+        <input type="date" id="endDate" onchange="applyFilters()" />
+      </div>
+    </div>
+    <div class="filter-row">
+      <button onclick="clearFilters()"><i class="fa-solid fa-circle-xmark"></i> Clear Filters</button>
+    </div>
+  </div>
+  <br />
+  <h2><i class="fa-solid fa-book"></i> Ledger</h2>
+  <div class="changes-container">
+    <button onclick="undoChange()"><i class="fa-solid fa-undo"></i> Undo Last Action</button>
+    <button onclick="redoChange()"><i class="fa-solid fa-redo"></i> Redo Last Action</button>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Sl.No</th>
+          <th>Date <span class="sort-indicator" data-col="date">⇅</span></th>
+          <th>Account <span class="sort-indicator" data-col="account">⇅</span></th>
+          <th>Description <span class="sort-indicator" data-col="description">⇅</span></th>
+          <th>Type <span class="sort-indicator" data-col="type">⇅</span></th>
+          <th>Debit <span class="sort-indicator" data-col="amount">⇅</span></th>
+          <th>Credit <span class="sort-indicator" data-col="amount">⇅</span></th>
+          <th>Closing Balance</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <div class="summary-container">
+    
+    <h2 class="heading"><i class="fa-solid fa-clipboard-list"></i> Summary</h2>
+    <div id="summarySection">
+      <div class="summary-box income-summary">Total Income: ₹ <span id="totalIncome">0.00</span></div>
+      <div class="summary-box expense-summary">Total Expenses: ₹ <span id="totalExpense">0.00</span></div>
+      <div class="summary-box balance-summary">Final Balance: ₹ <span id="finalBalance">0.00</span></div>
+    </div>
+  </div>
+  
+  <!-- Smart Plan Section -->
+  <div id="planSection" class="plan-section card">
+    Smart plan will be shown here when balance < <span id="planLimit" class="highlight">
+      800
+      </span>
+      (you can modify in settings)
+  </div>
+<!-- Budget Plan Section -->
+<div id="budgetPlan" class="card hidden">
+  <h2 class="">Monthly Budget</h2>
+    <div id="summarySection">
+      <div class="summary-box income-summary"> Expenses:  <span id="budgetExpenses">0.00</span></div>
+      <div class="summary-box expense-summary">Monthly Budget:  <span id="budgetLimit">0.00</span></div>
+      <div class="summary-box balance-summary">Difference:  <span id="budgetRemaining">0.00</span></div>
+    </div>
+  <p id="budgetStatus"></p>
+</div>
+  <section id="reportsSection" class="card">
+    <h2><i class="fa-solid fa-basic"></i> Basic Reports</h2>
+    <div id="reportsOutput"></div>
+  </section>
+  <section id="advancedReports" class="card">
+    <h2><i class="fa-solid fa-chart-simple"></i> Advanced Reports</h2>
+    
+    <div class="report-section" id="topIncomesSection">
+      <h3>Top 5 Incomes</h3>
+      <ul id="topIncomesList"></ul>
+    </div>
+    
+    <div class="report-section" id="topExpensesSection">
+      <h3>Top 5 Expenses</h3>
+      <ul id="topExpensesList"></ul>
+    </div>
+    
+    <div class="report-section" id="frequentSection">
+      <h3>Frequent Transactions</h3>
+      <ul id="frequentList"></ul>
+    </div>
+    
+    <div class="report-section" id="recurringSection">
+      <h3>Recurring Transactions</h3>
+      <ul id="recurringList"></ul>
+    </div>
+  </section>
+  <!--       <section class="card">
+  <h2><i class="fa-solid fa-clock"></i> Upcoming Expected Transactions</h2>
+  <div class="report-section" id="upcomingSection">
+    <ul id="upcomingList"></ul>
+  </div>
+</section>
+
+     -->
+  <h2 style="text-align: center;"><i class="fa-solid fa-chart-pie"></i> Visual Insights</h2>
+  <div id="chartContainer" class="chart-container">
+    
+    <div class="chart-card" id="pieChart-container">
+      <canvas id="pieChart"></canvas>
+      <button onclick="downloadChart('pieChart')" class="export-btn">Download Pie Chart</button>
+    </div>
+    
+    <div class="chart-card" id="barChart-container">
+      <canvas id="barChart"></canvas>
+      <button onclick="downloadChart('barChart')" class="export-btn">Download Bar Chart</button>
+    </div>
+    
+    <div class="chart-card" id="lineChart-container">
+      <canvas id="lineChart"></canvas>
+      <button onclick="downloadChart('lineChart')" class="export-btn">Download Line Chart</button>
+    </div>
+    
+  </div>
+  <div class="special-insights card">
+    <h2><i class="fa-solid fa-chart-column"></i> Special Insights</h2>
+    <p id="highestIncome" class="line">Highest Income: -</p>
+    <p id="highestExpense" class="line">Highest Expense: -</p>
+    <p id="zeroDays" class="line">Zero Spent Days: -</p>
+    <p id="incomeRatio" class="line">Income Ratio: -</p>
+  </div>
+  <div id="note">
+    <strong>Note :</strong> Please download the file as <strong>JSON</strong> after entry of transactions to import it again later. for more information please read the <a href="Routes/docs.html">Documentation</a>
+    
+  </div>
+
+ <script src="scripts/script.js"></script>
+  <script src="scripts/utilitys.js"></script>
+  <!-- <script src="drive.js"></script> -->
+  
+  <!-- <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(() => console.log("Service Worker Registered"));
+  }
+</script> -->
+
+<!-- Example button to enable biometric lock in your settings page -->
+  
+</body>
+
+</html>

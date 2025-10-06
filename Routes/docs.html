@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <script src="../scripts/auth.js"></script>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ledger App - Documentation</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../Routes/author.html">Author</a></li>
+      <li><a href="../Routes/docs.html" class="active">Docs</a></li>
+      <li><a href="../Routes/reports.html" class="">Reports</a></li>
+      <li><a href="../Routes/transfer.html">Transfer</a></li>
+      <li><a href="../Routes/accounts.html" class="">Accounts</a></li>
+      <li><a href="../Routes/settings.html" class="">Settings</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Theme Selector -->
+  <div class="theme-selector" style="display: none;">
+    <label for="themeSelect">🎨 Theme:</label>
+    <select id="themeSelect">
+      <option value="light">🌞 Light</option>
+      <option value="dark">🌙 Dark</option>
+      <option value="blue">🔵 Blue</option>
+      <option value="green">🟢 Green</option>
+      <option value="sunset">🌅 Sunset</option>
+      <option value="neon">💡 Neon</option>
+      <option value="pastel">🎨 Pastel</option>
+      <option value="coffee">☕ Coffee</option>
+      <option value="solarized">🌐 Solarized</option>
+      <option value="purple">💜 Purple</option>
+      <option value="mono">⚪ Mono</option>
+      <option value="gradient">🌈 Gradient</option>
+      <option value="rose">🌹 Rose</option>
+      <option value="aqua">💧 Aqua</option>
+      <option value="forest">🌲 Forest</option>
+      <option value="gold">🥇 Gold</option>
+      <option value="silver">🥈 Silver</option>
+      <option value="crimson">❤️ Crimson</option>
+      <option value="indigo">🔮 Indigo</option>
+      <option value="cyberpunk">⚡ Cyberpunk</option>
+    </select>
+  </div>
+  
+  <div class="container">
+    <h1><i class="fa-solid fa-book"></i> Vault Ledger - User Guide</h1>
+    <p>
+      Welcome to <strong>Vault Ledger</strong> — a secure, offline-first income & expense tracker with
+      advanced features like multiple ledgers, wealth insights, secure vault lock, transfers, and detailed reporting.
+    </p>
+    
+    <!-- Ledger Management -->
+    <section class="card" id="ledger-management">
+      <h2><i class="fa-solid fa-folder"></i> Ledger Management</h2>
+      <ul>
+        <li>Create multiple <strong>ledgers</strong> for personal, business, or projects.</li>
+        <li>Ledger name is <strong>permanent</strong> once created (cannot be edited).</li>
+        <li>Each ledger saves independently in <strong>LocalStorage</strong>.</li>
+      </ul>
+    </section>
+    
+    <!-- Add / Edit / Delete Entries -->
+    <section class="card" id="entries">
+      <h2><i class="fa-solid fa-list"></i> Transactions</h2>
+      <ul>
+        <li><strong>Add:</strong> Enter date, description, amount, and type (Income/Expense).</li>
+        <li><strong>Edit:</strong> Click Edit to auto-fill form, update, then save.</li>
+        <li><strong>Delete:</strong> Removes entry instantly and recalculates balances.</li>
+        <li>Default action buttons appear on every entry row.</li>
+      </ul>
+    </section>
+    
+    <!-- Transfer Funds -->
+    <section class="card" id="transfer">
+      <h2><i class="fa-solid fa-right-left"></i> Transfer Funds</h2>
+      <ul>
+        <li>Move money between <strong>two ledgers</strong> with a single action.</li>
+        <li>Source ledger is deducted, destination ledger credited.</li>
+        <li>Both ledgers auto-update with new balances.</li>
+      </ul>
+    </section>
+    
+    <!-- Import / Export -->
+    <section class="card" id="import-export">
+      <h2><i class="fa-solid fa-file-export"></i> Import / Export</h2>
+      <ul>
+        <li><strong>Import:</strong> Restore data from a <code>.json</code> file.</li>
+        <li><strong>Export:</strong> Save to <code>JSON</code>, <code>Excel</code>, or <code>PDF</code>.</li>
+        <li>Exports support <strong>custom filenames</strong>.</li>
+        <li>PDF excludes action buttons and shows ledger balances.</li>
+      </ul>
+    </section>
+    
+    <!-- Balance Summary -->
+    <section class="card" id="balance">
+      <h2><i class="fa-solid fa-wallet"></i> Balance Summary</h2>
+      <p>View <strong>Total Income</strong>, <strong>Total Expenses</strong>, and <strong>Current Balance</strong> at a glance.
+        Report pages also show <strong>ledger-wise balances</strong>.</p>
+    </section>
+    
+    <!-- Wealth Indicators -->
+    <section class="card" id="wealth-indicators">
+      <h2><i class="fa-solid fa-coins"></i> Wealth Indicators</h2>
+      <ul>
+        <li>Monthly <strong>net savings</strong>.</li>
+        <li>Expense-to-income <strong>ratio</strong>.</li>
+        <li>Wealth growth trend line.</li>
+        <li>Alerts if you cross your <strong>plan limit</strong>.</li>
+      </ul>
+    </section>
+    
+    <!-- Insights -->
+    <section class="card" id="insights">
+      <h2><i class="fa-solid fa-lightbulb"></i> Insights</h2>
+      <ul>
+        <li><strong>Highest Income</strong> and <strong>Highest Expense</strong> with details.</li>
+        <li><strong>Zero Spend Days</strong> highlighted in calendar view.</li>
+        <li><strong>Expense Categories</strong> breakdown.</li>
+      </ul>
+    </section>
+    
+    <!-- Charts -->
+    <section class="card" id="charts">
+      <h2><i class="fa-solid fa-chart-bar"></i> Charts & Visuals</h2>
+      <ul>
+        <li>Interactive <strong>Pie</strong>, <strong>Bar</strong>, and <strong>Line</strong> charts.</li>
+        <li>Charts update live with your transactions.</li>
+        <li>Download charts as <code>PNG</code>.</li>
+        <li>All charts adapt to current theme (dark/light/neon etc.).</li>
+      </ul>
+    </section>
+    
+    <!-- Filters -->
+    <section class="card" id="filters">
+      <h2><i class="fa-solid fa-filter"></i> Filters</h2>
+      <ul>
+        <li>Filter by <strong>Date Range</strong>, <strong>Ledger</strong>, <strong>Type</strong>, or <strong>Keyword</strong>.</li>
+        <li>Supports multi-select with <strong>include/exclude</strong> options.</li>
+        <li>Selected count shown directly in filter box.</li>
+        <li>Clear filters anytime to reset view.</li>
+      </ul>
+    </section>
+    
+    <!-- Settings -->
+    <section class="card" id="settings">
+      <h2><i class="fa-solid fa-gear"></i> Settings</h2>
+      <ul>
+        <li><strong>Theme Changer:</strong> Switch between 20+ themes. Available only in Settings page.</li>
+        <li><strong>Password Protection:</strong> Lock/unlock your Vault with a custom password.</li>
+        <li><strong>Plan Limit:</strong> Set a monthly spending cap. Exceeding it shows alerts.</li>
+        <li><strong>Auto-Lock:</strong> Vault locks after inactivity (configurable).</li>
+      </ul>
+    </section>
+    
+    <!-- Version Info -->
+    <section class="card" id="version">
+      <h2><i class="fa-solid fa-code-branch"></i> Version Info & Changelog</h2>
+      <p><strong>Current Version:</strong> <code>v2.5.0</code></p>
+      <ul>
+        <li>✅ Added: <strong>Settings Page</strong> with Theme Changer, Vault Password, and Plan Limit.</li>
+        <li>✅ Added: <strong>Wealth Indicators</strong> & monthly savings insights.</li>
+        <li>✅ Added: <strong>Fund Transfer</strong> between ledgers.</li>
+        <li>✅ Added: <strong>Ledger Balances</strong> in Reports export (Excel/PDF).</li>
+        <li>✅ Enhanced: Multi-ledger filters with include/exclude & selected count.</li>
+        <li>✅ Enhanced: Charts auto-adapt fully to themes.</li>
+        <li>🔧 Fixed: Vault reset issue when empty.</li>
+        <li>🔧 Fixed: Password persistence across reloads.</li>
+      </ul>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+      <hr />
+      <p>Made by Nandhu | Fully offline & secure | All data stored locally via JSON</p>
+    </footer>
+  </div>
+  <script src="../scripts/utilitys.js"></script>
+</body>
+
+</html>

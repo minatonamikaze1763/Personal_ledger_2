@@ -1,0 +1,32 @@
+.report-filter-dropdowns {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.report-filter-dropdowns label {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.report-dropdown {
+  min-width: 180px;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #ccc);
+  font-size: 0.95rem;
+}
+
+/* ✅ Mobile view: stack dropdowns in column */
+@media (max-width: 768px) {
+  .report-filter-dropdowns {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .report-dropdown {
+    width: 100%;
+  }
+}

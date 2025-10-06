@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../scripts/auth.js"></script>
+  
+  <title>Transfer Funds</title>
+  <link rel="stylesheet" href="../styles/style.css" />
+  <link rel="stylesheet" href="../styles/settings.css" />
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../Routes/author.html">Author</a></li>
+      <li><a href="../Routes/docs.html">Docs</a></li>
+      <li><a href="../Routes/reports.html">Reports</a></li>
+      <li><a href="../Routes/transfer.html" class="">Transfer</a></li>
+      <li><a href="../Routes/accounts.html" class="">Accounts</a></li>
+      <li><a href="../Routes/settings.html" class="active">Settings</a></li>
+    </ul>
+  </nav>
+  <!-- Theme Selector -->
+  <div class="theme-selector">
+    <label for="themeSelect">🎨 Theme:</label>
+    <select id="themeSelect">
+      <option value="light">🌞 Light</option>
+      <option value="dark">🌙 Dark</option>
+      <option value="gradient">🌈 Gradient</option>
+      <option value="ocean">🌊 Ocean Breeze</option>
+      <option value="sunset">🌅 Sunset Glow</option>
+      <option value="aurora">✨ Aurora</option>
+      <option value="candy">🍭 Candy</option>
+      <option value="lava">🌋 Lava</option>
+      <option value="emerald">💎 Emerald</option>
+      <option value="skyfall">☁ Skyfall</option>
+      <option value="coral">🐚 Coral Reef</option>
+      <option value="galaxy">🌌 Galaxy</option>
+      <option value="flame">🔥 Flame</option>
+      <option value="jade">🌿 Jade</option>
+      <option value="royal">👑 Royal</option>
+      <option value="blossom">🌸 Blossom</option>
+      <option value="horizon">🌄 Horizon</option>
+      <option value="desert">🏜 Desert</option>
+      <option value="twilight">🌆 Twilight</option>
+      <option value="cyberwave">⚡ Cyberwave</option>
+    </select>
+  </div>
+  <h1>Settings Page</h1>
+  <p>Here you can modify the settings those will be applied across all pages.</p>
+  <p>NOTE: Settings are auto saved on input!</p>
+  <div id="settingsContainer" class="p-4">
+  </div>
+
+  <script src="../scripts/settings.js"></script>
+  <script src="../scripts/utilitys.js"></script>
+</body>
+
+</html>

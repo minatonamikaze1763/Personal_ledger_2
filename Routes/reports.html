@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports</title>
+  <script src="../scripts/auth.js"></script>
+
+  <link rel="stylesheet" href="../styles/style.css" />
+  <link rel="stylesheet" href="../styles/reports.css" />
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="download-png.js"></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+    <button class="hamburger" id="hamburger">&#9776;</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../Routes/author.html">Author</a></li>
+      <li><a href="../Routes/docs.html">Docs</a></li>
+      <li><a href="../Routes/reports.html" class="active">Reports</a></li>
+      <li><a href="../Routes/transfer.html" >Transfer</a></li>
+      <li><a href="../Routes/accounts.html" class="">Accounts</a></li>
+      <li><a href="../Routes/settings.html" class="">Settings</a></li>
+    </ul>
+  </nav>
+
+  <!-- Theme Selector -->
+  <div class="theme-selector" style="display: none;">
+    <label for="themeSelect">🎨 Theme:</label>
+    <select id="themeSelect">
+      <option value="light">🌞 Light</option>
+      <option value="dark">🌙 Dark</option>
+      <option value="blue">🔵 Blue</option>
+      <option value="green">🟢 Green</option>
+      <option value="sunset">🌅 Sunset</option>
+      <option value="neon">💡 Neon</option>
+      <option value="pastel">🎨 Pastel</option>
+      <option value="coffee">☕ Coffee</option>
+      <option value="solarized">🌐 Solarized</option>
+      <option value="purple">💜 Purple</option>
+      <option value="mono">⚪ Mono</option>
+      <option value="gradient">🌈 Gradient</option>
+      <option value="rose">🌹 Rose</option>
+      <option value="aqua">💧 Aqua</option>
+      <option value="forest">🌲 Forest</option>
+      <option value="gold">🥇 Gold</option>
+      <option value="silver">🥈 Silver</option>
+      <option value="crimson">❤️ Crimson</option>
+      <option value="indigo">🔮 Indigo</option>
+      <option value="cyberpunk">⚡ Cyberpunk</option>
+    </select>
+  </div>
+
+  <!-- Main Report Section -->
+  <main class="report-main">
+    <h1 class="report-title"><i class="fa-solid fa-clipboard-list"></i> Combined Ledgers Report</h1>
+
+    <!-- Ledger Filter -->
+    <section class="report-filter">
+      <h3><i class="fa-solid fa-filter"></i> Ledger Filter</h3>
+      <div class="report-filter-options">
+        <label>
+          <input type="radio" name="ledgerMode" value="all" checked>
+          All
+        </label>
+        <label>
+          <input type="radio" name="ledgerMode" value="custom">
+          Custom
+        </label>
+        <label>
+          <input type="radio" name="ledgerMode" value="exclude">
+          Exclude Some
+        </label>
+      </div>
+
+      <!-- Dropdowns -->
+      <div class="report-filter-dropdowns">
+        <select id="includeLedgers" class="report-dropdown" multiple>
+          <!-- Populated by JS -->
+        </select>
+
+        <select id="excludeLedgers" class="report-dropdown" multiple style="display:none;">
+          <!-- Populated by JS -->
+        </select>
+      </div>
+
+      <button class="report-btn" id="generateReport">
+        <i class="fa-solid fa-table"></i> Generate Report
+      </button>
+    </section>
+  </main>
+
+    <!-- Report Table -->
+    <section class="report-table-section">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th>Ledger Name</th>
+            <th>Total Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS will populate rows -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Final Balance</strong></td>
+            <td id="finalBalance">0</td>
+          </tr>
+        </tfoot>
+      </table>
+
+    </section>
+           <!-- Download PNG Button -->
+       <button id="downloadPngBtn" class="export-btn">
+         <i class="fa-solid fa-image"></i> Download as PNG
+       </button>
+
+  <script src="../scripts/utilitys.js"></script>
+  <script src="../scripts/reports.js"></script>
+</body>
+</html>
