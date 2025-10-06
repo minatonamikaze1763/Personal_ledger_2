@@ -2120,18 +2120,16 @@ function refreshReports() {
   buildFilterAccounts();
 }
 
-/*
 window.addEventListener("beforeunload", function() {
   if (!getSetting("autoDownload", false)) return;
   downloadAllLedgers("json");
 });
-*/
   
-window.addEventListener("beforeunload", function() {
-  if (!getSetting("autoDownload", false)) return;
+// window.addEventListener("beforeunload", function() {
+//   if (!getSetting("autoDownload", false)) return;
   
-  if (hasUnsavedChanges) downloadAllLedgers("json");
-});
+//   if (hasUnsavedChanges) downloadAllLedgers("json");
+// });
 
 function updateTxnCount() {
   localStorage.setItem("lastSavedTxnCount", transactions.length);
