@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Author - Vault Ledger</title>
-  <script src="../scripts/auth.js"></script>
-
   <link rel="stylesheet" href="../styles/style.css" />
   <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -34,114 +32,6 @@
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <h1 class="nav-brand">Vault Ledger</h1>
-    <button class="hamburger" id="hamburger">&#9776;</button>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="../index.html">Home</a></li>
-      <li><a href="../Routes/author.html" class="active">Author</a></li>
-      <li><a href="../Routes/docs.html">Docs</a></li>
-      <li><a href="../Routes/reports.html">Reports</a></li>
-      <li><a href="../Routes/transfer.html" >Transfer</a></li>
-      <li><a href="../Routes/accounts.html" class="">Accounts</a></li>
-      <li><a href="../Routes/settings.html" class="">Settings</a></li>
-
-
-    </ul>
-  </nav>
-  <!-- Theme Selector -->
-  <div class="theme-selector" style="display: none;">
-    <label for="themeSelect">🎨 Theme:</label>
-    <select id="themeSelect">
-      <option value="light">🌞 Light</option>
-      <option value="dark">🌙 Dark</option>
-      <option value="blue">🔵 Blue</option>
-      <option value="green">🟢 Green</option>
-      <option value="sunset">🌅 Sunset</option>
-      <option value="neon">💡 Neon</option>
-      <option value="pastel">🎨 Pastel</option>
-      <option value="coffee">☕ Coffee</option>
-      <option value="solarized">🌐 Solarized</option>
-      <option value="purple">💜 Purple</option>
-      <option value="mono">⚪ Mono</option>
-      <option value="gradient">🌈 Gradient</option>
-      <option value="rose">🌹 Rose</option>
-      <option value="aqua">💧 Aqua</option>
-      <option value="forest">🌲 Forest</option>
-      <option value="gold">🥇 Gold</option>
-      <option value="silver">🥈 Silver</option>
-      <option value="crimson">❤️ Crimson</option>
-      <option value="indigo">🔮 Indigo</option>
-      <option value="cyberpunk">⚡ Cyberpunk</option>
-    </select>
-  </div>
-
-  <!-- Author Section -->
-  <div class="container author-page">
-    <h1><i class="fa-solid fa-user"></i> About the Author</h1>
-
-    <p>Hi 👋 I’m <strong>Nandhu (aka cuber-dev)</strong>, a web developer and gamer 🎮.  
-    This page explains my live <b>GitHub projects.</b></p>
-
-    <!-- GitHub Repos Section -->
-    <section class="github-repos">
-      <h2><i class="fa-brands fa-github"></i> My GitHub Repositories</h2>
-      <p>Total Repositories: <span id="repoCount">Loading...</span></p>
-      <div id="repoList"></div>
-    </section>
-<!-- Contact Section -->
-<section class="contact">
-  <h2><i class="fa-solid fa-address-card"></i> Contact Me</h2>
-  <p>
-    <i class="fa-solid fa-envelope"></i>
-    Email: <a href="mailto:novajames099@gmail.com">cuber-dev.gmail.com</a>
-  </p>
-  <p>
-    <i class="fa-brands fa-github"></i>
-    GitHub: <a href="https://github.com/cuber-dev" target="_blank">github.com/cuber-dev</a>
-  </p>
-</section>
-    <footer>
-      <hr />
-      <p>Made by Nandhu | Fully offline & secure | Data stored via JSON</p>
-    </footer>
-  </div>
-
-  <script>
-    async function loadGitHubRepos() {
-      try {
-        const response = await fetch("https://api.github.com/users/cuber-dev/repos");
-        const repos = await response.json();
-
-        // Show repo count
-        document.getElementById("repoCount").textContent = repos.length;
-
-        const repoList = document.getElementById("repoList");
-        repoList.innerHTML = "";
-
-        repos.forEach(repo => {
-          const repoCard = document.createElement("div");
-          repoCard.classList.add("repo-card");
-
-          repoCard.innerHTML = `
-            <a href="${repo.html_url}" target="_blank">${repo.name}</a>
-            <p>${repo.description ? repo.description : "📄 No description available"}</p>
-            <p>⭐ Stars: ${repo.stargazers_count} | 🍴 Forks: ${repo.forks_count} | 🛠 Language: ${repo.language || "N/A"}</p>
-          `;
-
-          repoList.appendChild(repoCard);
-        });
-      } catch (error) {
-        console.error("Error fetching repos:", error);
-        document.getElementById("repoList").innerHTML = "<p>⚠️ Unable to load repositories right now.</p>";
-      }
-    }
-
-    loadGitHubRepos();
-    
-  </script>
-  <script src="../scripts/utilitys.js"></script>
 
 </body>
 </html>
