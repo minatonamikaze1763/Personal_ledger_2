@@ -1372,7 +1372,7 @@ async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = documen
   
   // ====== CHARTS SECTION (All in one page with correct aspect ratio) ======
   doc.addPage();
-
+  
   try {
     const charts = [
       { id: "pieChart", title: "Income vs Expense" },
@@ -2147,7 +2147,7 @@ function updateLedgerSelect() {
   let ledgers = JSON.parse(localStorage.getItem("ledgers") || "[]");
   
   // ✅ Remove duplicates
-  ledgers = [...new Set(ledgers)];
+  ledgers = [...new Set(ledgers)].sort((a, b) => a.localeCompare(b));
   
   // ✅ Save cleaned list
   localStorage.setItem("ledgers", JSON.stringify(ledgers));
