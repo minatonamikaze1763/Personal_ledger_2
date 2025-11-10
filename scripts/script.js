@@ -1371,54 +1371,57 @@ async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = documen
   
   
   // ====== CHARTS SECTION (All in one page with correct aspect ratio) ======
-  doc.addPage();
-  
-  try {
-    const charts = [
-      { id: "pieChart", title: "Income vs Expense" },
-      { id: "barChart", title: "Monthly Totals" },
-      { id: "lineChart", title: "Balance Trend" }
-    ];
+  function addCharts() {
+    doc.addPage();
     
-    let chartY = 10;
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    const maxWidth = pageWidth - margin * 2;
-    
-    charts.forEach((chart, index) => {
-      const canvas = document.getElementById(chart.id);
-      if (canvas) {
-        const imgData = canvas.toDataURL("image/png");
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const aspectRatio = imgHeight / imgWidth;
-        
-        // Scale width to fit page but preserve aspect ratio
-        const renderWidth = maxWidth;
-        const renderHeight = renderWidth * aspectRatio;
-        
-        // Title
-        doc.setFontSize(13)
-          .setTextColor(primaryColor)
-          .setFont(undefined, "bold");
-        doc.text(chart.title, pageWidth / 2, chartY, { align: "center" });
-        
-        chartY += 8;
-        
-        // Add chart image with proportional scaling
-        doc.addImage(imgData, "PNG", margin, chartY, renderWidth, renderHeight);
-        chartY += renderHeight + 10;
-        
-        // If near page bottom, add new page
-        if (chartY > 260 && index !== charts.length - 1) {
-          doc.addPage();
-          chartY = 20;
+    try {
+      const charts = [
+        { id: "pieChart", title: "Income vs Expense" },
+        { id: "barChart", title: "Monthly Totals" },
+        { id: "lineChart", title: "Balance Trend" }
+      ];
+      
+      let chartY = 10;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      const maxWidth = pageWidth - margin * 2;
+      
+      charts.forEach((chart, index) => {
+        const canvas = document.getElementById(chart.id);
+        if (canvas) {
+          const imgData = canvas.toDataURL("image/png");
+          const imgWidth = canvas.width;
+          const imgHeight = canvas.height;
+          const aspectRatio = imgHeight / imgWidth;
+          
+          // Scale width to fit page but preserve aspect ratio
+          const renderWidth = maxWidth;
+          const renderHeight = renderWidth * aspectRatio;
+          
+          // Title
+          doc.setFontSize(13)
+            .setTextColor(primaryColor)
+            .setFont(undefined, "bold");
+          doc.text(chart.title, pageWidth / 2, chartY, { align: "center" });
+          
+          chartY += 8;
+          
+          // Add chart image with proportional scaling
+          doc.addImage(imgData, "PNG", margin, chartY, renderWidth, renderHeight);
+          chartY += renderHeight + 10;
+          
+          // If near page bottom, add new page
+          if (chartY > 260 && index !== charts.length - 1) {
+            doc.addPage();
+            chartY = 20;
+          }
         }
-      }
-    });
-  } catch (err) {
-    console.error("Chart export failed:", err);
+      });
+    } catch (err) {
+      console.error("Chart export failed:", err);
+    }
   }
+  isZip ? "" : addCharts();
   
   // ====== FOOTER SECTION ======
   doc.addPage();
