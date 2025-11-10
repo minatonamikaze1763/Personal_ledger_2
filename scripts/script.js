@@ -958,43 +958,43 @@ async function exportToPDF() {
 }
 
 
-async function exportSummaryPDF() {
+async function exportSummaryPDF(isZip,parsedData = ledger,ledgerName = document.getElementById("filename")?.value || "Ledger Summary") {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("p", "mm", "a4");
-
+  
   // ====== THEME COLORS ======
   const root = getComputedStyle(document.documentElement);
   const primaryColor = root.getPropertyValue("--primary-color")?.trim() || "#6a0dad";
   const secondaryColor = root.getPropertyValue("--secondary-color")?.trim() || "#f3e8ff";
   const textColor = root.getPropertyValue("--text-color")?.trim() || "#000";
-
+  
   // ====== META ======
-  const ledgerName = document.getElementById("filename")?.value || "Ledger Summary";
   const downloadDate = new Date().toLocaleString();
   const appURL = window.location.href;
-
+  
   // ====== FETCH DATA (Adjust based on your app) ======
-  const ledgerData = ledger;
+  const ledgerData = parsedData;
   if (!ledgerData.length) {
     alert("No ledger data found to summarize!");
     return;
   }
-
+  
   // ====== DATA PROCESSING ======
   const formatNum = n => Number(n || 0).toLocaleString("en-IN");
   const accountMap = {};
   const monthlyMap = {};
-  let totalIncome = 0, totalExpense = 0;
-
+  let totalIncome = 0,
+    totalExpense = 0;
+  
   ledgerData.forEach(tx => {
     const acc = tx.account || "Unknown";
     const amt = Number(tx.amount) || 0;
     const type = tx.type;
     const month = new Date(tx.date).toLocaleString("default", { month: "short", year: "numeric" });
-
+    
     if (!accountMap[acc]) accountMap[acc] = { income: 0, expense: 0 };
     if (!monthlyMap[month]) monthlyMap[month] = { income: 0, expense: 0 };
-
+    
     if (type === "income") {
       accountMap[acc].income += amt;
       monthlyMap[month].income += amt;
@@ -1005,9 +1005,9 @@ async function exportSummaryPDF() {
       totalExpense += amt;
     }
   });
-
+  
   const netBalance = totalIncome - totalExpense;
-
+  
   // ====== HEADER ======
   doc.setFontSize(18).setTextColor(primaryColor).setFont(undefined, "bold");
   doc.text(" Ledger Summary Report", 14, 15);
@@ -1015,21 +1015,21 @@ async function exportSummaryPDF() {
   doc.text(`Ledger: ${ledgerName}`, 14, 25);
   doc.text(`Generated: ${downloadDate}`, 14, 31);
   doc.text(`URL: ${appURL}`, 14, 37);
-
+  
   let y = 45;
-
+  
   // ====== Overall Totals ======
   doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
   doc.text("Overall Totals", 14, y);
   y += 6;
-
+  
   const overallData = [
     ["Type", "Amount (₹)"],
     ["Total Income", `₹${formatNum(totalIncome)}`],
     ["Total Expenses", `₹${formatNum(totalExpense)}`],
     ["Net Balance", `₹${formatNum(netBalance)} ${netBalance >= 0 ? "(Positive)" : "(Negative)"}`]
   ];
-
+  
   doc.autoTable({
     head: [overallData[0]],
     body: overallData.slice(1),
@@ -1039,30 +1039,35 @@ async function exportSummaryPDF() {
     headStyles: { fillColor: primaryColor, textColor: "#fff" },
     bodyStyles: { fillColor: secondaryColor },
   });
-
+  
   y = doc.lastAutoTable.finalY + 10;
-  if (y > 260) { doc.addPage(); y = 20; }
-
+  if (y > 260) {
+    doc.addPage();
+    y = 20;
+  }
+  
   // ====== Account-wise Summary ======
   doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
   doc.text("Account-Wise Summary", 14, y);
   y += 6;
-
+  
   const accountRows = Object.entries(accountMap).map(([acc, v]) => {
     const bal = v.income - v.expense;
     const balText = `${bal >= 0 ? "+" : "-"}${formatNum(Math.abs(bal))}`;
     return [acc, formatNum(v.income || 0), formatNum(v.expense || 0), balText];
   });
-
+  
   const totalRow = [
     "Total",
     `₹${formatNum(totalIncome)}`,
     `₹${formatNum(totalExpense)}`,
     `₹${formatNum(netBalance)}`
   ];
-
+  
   doc.autoTable({
-    head: [["Account", "Income (₹)", "Expense (₹)", "Balance (₹)"]],
+    head: [
+      ["Account", "Income (₹)", "Expense (₹)", "Balance (₹)"]
+    ],
     body: [...accountRows, ["", "", "", ""], totalRow],
     startY: y + 2,
     theme: "grid",
@@ -1070,15 +1075,18 @@ async function exportSummaryPDF() {
     headStyles: { fillColor: primaryColor, textColor: "#fff" },
     bodyStyles: { fillColor: secondaryColor },
   });
-
+  
   y = doc.lastAutoTable.finalY + 10;
-  if (y > 260) { doc.addPage(); y = 20; }
-
+  if (y > 260) {
+    doc.addPage();
+    y = 20;
+  }
+  
   // ====== Monthly Summary ======
   doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
   doc.text("Monthly Summary", 14, y);
   y += 6;
-
+  
   const monthlyRows = Object.entries(monthlyMap)
     .sort((a, b) => new Date(a[0]) - new Date(b[0]))
     .map(([month, v]) => [
@@ -1087,9 +1095,11 @@ async function exportSummaryPDF() {
       formatNum(v.expense),
       (v.income - v.expense >= 0 ? "+" : "-") + formatNum(Math.abs(v.income - v.expense))
     ]);
-
+  
   doc.autoTable({
-    head: [["Month", "Income (₹)", "Expense (₹)", "Net (₹)"]],
+    head: [
+      ["Month", "Income (₹)", "Expense (₹)", "Net (₹)"]
+    ],
     body: monthlyRows,
     startY: y + 2,
     theme: "grid",
@@ -1097,18 +1107,21 @@ async function exportSummaryPDF() {
     headStyles: { fillColor: primaryColor, textColor: "#fff" },
     bodyStyles: { fillColor: secondaryColor },
   });
-
+  
   y = doc.lastAutoTable.finalY + 10;
-  if (y > 260) { doc.addPage(); y = 20; }
-
+  if (y > 260) {
+    doc.addPage();
+    y = 20;
+  }
+  
   // ====== Highlights ======
   const topIncomeAcc = Object.entries(accountMap).sort((a, b) => b[1].income - a[1].income)[0]?.[0];
   const topExpenseAcc = Object.entries(accountMap).sort((a, b) => b[1].expense - a[1].expense)[0]?.[0];
-
+  
   doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
-  doc.text("🔍 Highlights", 14, y);
+  doc.text("Highlights", 14, y);
   y += 8;
-
+  
   const highlights = [
     `Top income source: ${topIncomeAcc || "N/A"}`,
     `Top expense category: ${topExpenseAcc || "N/A"}`,
@@ -1116,21 +1129,25 @@ async function exportSummaryPDF() {
     `Months Tracked: ${Object.keys(monthlyMap).length}`,
     `Net Balance: ₹${formatNum(netBalance)}`
   ];
-
+  
   doc.setFontSize(11).setTextColor(textColor);
   let currentY = y;
   highlights.forEach(line => {
-    if (currentY > 270) { doc.addPage(); currentY = 20; }
+    if (currentY > 270) {
+      doc.addPage();
+      currentY = 20;
+    }
     doc.text(`• ${line}`, 16, currentY);
     currentY += 7;
   });
-
+  
   // ====== FOOTER ======
   doc.setFontSize(9).setTextColor("#777").setFont(undefined, "italic");
   doc.text("Generated by Vault Ledger App", 14, 290);
-
+  
   // ====== SAVE ======
-  doc.save(`${ledgerName}_Summary.pdf`);
+  return isZip ? doc.output("arraybuffer")
+   : doc.save(`${ledgerName}_Summary.pdf`);
 }
 
 
@@ -1205,7 +1222,11 @@ async function downloadAllLedgers(dnFormat = document.getElementById("exportForm
           folder.file(`${ledgerName}.xlsx`, excelData);
           break;
         }
-        
+        case "summary": {
+           const pdfData = await exportSummaryPDF(true,parsed,ledgerName);
+           if(pdfData) folder.file(`${ledgerName}.pdf`, pdfData);
+           break;
+        };
         case "pdf": {
           const { jsPDF } = window.jspdf;
           
