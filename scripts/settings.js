@@ -9,7 +9,7 @@ const settings = {
   exportFormat: {
     value: "json",
     type: "select",
-    options: ["excel", "pdf", "json", "png"],
+    options: ["excel", "pdf","summary","json", "png"],
     label: "Export Format",
     desc: "Default export format."
   },
