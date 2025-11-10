@@ -958,7 +958,7 @@ async function exportToPDF() {
 }
 
 
-async function exportSummaryPDF(isZip,parsedData = ledger,ledgerName = document.getElementById("filename")?.value || "Ledger Summary") {
+async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = document.getElementById("filename")?.value || "Ledger Summary") {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF("p", "mm", "a4");
   
@@ -1115,39 +1115,219 @@ async function exportSummaryPDF(isZip,parsedData = ledger,ledgerName = document.
   }
   
   // ====== Highlights ======
-  const topIncomeAcc = Object.entries(accountMap).sort((a, b) => b[1].income - a[1].income)[0]?.[0];
-  const topExpenseAcc = Object.entries(accountMap).sort((a, b) => b[1].expense - a[1].expense)[0]?.[0];
+  // ====== Highlights & Reports ======
+  const allDates = ledgerData.map(tx => new Date(tx.date));
+  const daysCount = new Set(allDates.map(d => d.toDateString())).size || 1;
+  const monthsCount = new Set(allDates.map(d => `${d.getFullYear()}-${d.getMonth()}`)).size || 1;
+  const yearsCount = new Set(allDates.map(d => d.getFullYear())).size || 1;
   
-  doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
-  doc.text("Highlights", 14, y);
-  y += 8;
+  // Daily, Monthly, Yearly averages
+  const dailyAvgIncome = totalIncome / daysCount;
+  const dailyAvgExpense = totalExpense / daysCount;
+  const monthlyAvgIncome = totalIncome / monthsCount;
+  const monthlyAvgExpense = totalExpense / monthsCount;
+  const yearlyAvgIncome = totalIncome / yearsCount;
+  const yearlyAvgExpense = totalExpense / yearsCount;
   
-  const highlights = [
-    `Top income source: ${topIncomeAcc || "N/A"}`,
-    `Top expense category: ${topExpenseAcc || "N/A"}`,
-    `Total Accounts: ${Object.keys(accountMap).length}`,
-    `Months Tracked: ${Object.keys(monthlyMap).length}`,
-    `Net Balance: ₹${formatNum(netBalance)}`
+  // Highest & lowest incomes/expenses
+  const incomeTxs = ledgerData.filter(t => t.type === "income").sort((a, b) => b.amount - a.amount);
+  const expenseTxs = ledgerData.filter(t => t.type === "expense").sort((a, b) => b.amount - a.amount);
+  const highestIncome = incomeTxs[0];
+  const lowestIncome = incomeTxs[incomeTxs.length - 1];
+  const highestExpense = expenseTxs[0];
+  const lowestExpense = expenseTxs[expenseTxs.length - 1];
+  
+  // Frequent transactions by category
+  const freqMap = {};
+  ledgerData.forEach(t => {
+    freqMap[t.account] = (freqMap[t.account] || 0) + 1;
+  });
+  const freqList = Object.entries(freqMap).sort((a, b) => b[1] - a[1]);
+  
+  // Detect recurring transactions (same date, account, desc, amount)
+  const recurMap = {};
+  ledgerData.forEach(t => {
+    const key = `${t.date}|${t.account}|${t.desc}|${t.amount}`;
+    recurMap[key] = (recurMap[key] || 0) + 1;
+  });
+  const recurring = Object.entries(recurMap)
+    .filter(([_, c]) => c > 1)
+    .map(([k, c]) => {
+      const [date, acc, desc, amt] = k.split("|");
+      return { date, acc, desc, amt, count: c };
+    });
+  
+  // ====== PAGE ADJUST ======
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+  
+  // ====== SECTION TITLE ======
+  doc.setFontSize(16).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Reports & Highlights", 14, y);
+  y += 10;
+  
+  // ====== BASIC REPORTS ======
+  doc.setFontSize(13).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Basic Reports", 14, y);
+  y += 6;
+  
+  const basicData = [
+    ["Metric", "Income (₹)", "Expense (₹)"],
+    ["Daily Avg", formatNum(dailyAvgIncome.toFixed(2)), formatNum(dailyAvgExpense.toFixed(2))],
+    ["Monthly Avg", formatNum(monthlyAvgIncome.toFixed(2)), formatNum(monthlyAvgExpense.toFixed(2))],
+    ["Yearly Avg", formatNum(yearlyAvgIncome.toFixed(2)), formatNum(yearlyAvgExpense.toFixed(2))],
+    ["Highest", `${highestIncome ? highestIncome.amount : 0}`, `${highestExpense ? highestExpense.amount : 0}`],
+    ["Lowest", `${lowestIncome ? lowestIncome.amount : 0}`, `${lowestExpense ? lowestExpense.amount : 0}`]
   ];
   
-  doc.setFontSize(11).setTextColor(textColor);
-  let currentY = y;
-  highlights.forEach(line => {
-    if (currentY > 270) {
-      doc.addPage();
-      currentY = 20;
-    }
-    doc.text(`• ${line}`, 16, currentY);
-    currentY += 7;
+  doc.autoTable({
+    head: [basicData[0]],
+    body: basicData.slice(1),
+    startY: y + 2,
+    theme: "grid",
+    styles: { fontSize: 9, textColor, lineColor: primaryColor },
+    headStyles: { fillColor: primaryColor, textColor: "#fff" },
+    bodyStyles: { fillColor: secondaryColor },
   });
+  y = doc.lastAutoTable.finalY + 10;
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+  
+  // ====== TOP 5 INCOMES ======
+  doc.setFontSize(13).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Top 5 Incomes", 14, y);
+  y += 6;
+  doc.autoTable({
+    head: [
+      ["Account | Description", "Amount (₹)", "Date"]
+    ],
+    body: incomeTxs.slice(0, 5).map(t => [
+      `${t.account} | ${t.desc}`,
+      formatNum(t.amount),
+      t.date
+    ]),
+    startY: y + 2,
+    theme: "grid",
+    styles: { fontSize: 9, textColor, lineColor: primaryColor },
+    headStyles: { fillColor: primaryColor, textColor: "#fff" },
+    bodyStyles: { fillColor: secondaryColor },
+  });
+  y = doc.lastAutoTable.finalY + 10;
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+  
+  // ====== TOP 5 EXPENSES ======
+  doc.setFontSize(13).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Top 5 Expenses", 14, y);
+  y += 6;
+  doc.autoTable({
+    head: [
+      ["Account | Description", "Amount (₹)", "Date"]
+    ],
+    body: expenseTxs.slice(0, 5).map(t => [
+      `${t.account} | ${t.desc}`,
+      formatNum(t.amount),
+      t.date
+    ]),
+    startY: y + 2,
+    theme: "grid",
+    styles: { fontSize: 9, textColor, lineColor: primaryColor },
+    headStyles: { fillColor: primaryColor, textColor: "#fff" },
+    bodyStyles: { fillColor: secondaryColor },
+  });
+  y = doc.lastAutoTable.finalY + 10;
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+  
+  // ====== FREQUENT TRANSACTIONS ======
+  doc.setFontSize(13).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Frequent Transactions", 14, y);
+  y += 6;
+  doc.autoTable({
+    head: [
+      ["Category", "Transactions"]
+    ],
+    body: freqList.map(([acc, c]) => [acc, `${c} time${c > 1 ? "s" : ""}`]),
+    startY: y + 2,
+    theme: "grid",
+    styles: { fontSize: 9, textColor, lineColor: primaryColor },
+    headStyles: { fillColor: primaryColor, textColor: "#fff" },
+    bodyStyles: { fillColor: secondaryColor },
+  });
+  y = doc.lastAutoTable.finalY + 10;
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
+  
+  // ====== RECURRING TRANSACTIONS ======
+  doc.setFontSize(13).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Recurring Transactions", 14, y);
+  y += 6;
+  if (recurring.length === 0) {
+    doc.setFontSize(10).setTextColor(textColor);
+    doc.text("No recurring transactions found.", 16, y + 4);
+    y += 8;
+  } else {
+    doc.autoTable({
+      head: [
+        ["Date", "Account", "Description", "Amount (₹)", "Count"]
+      ],
+      body: recurring.map(r => [
+        r.date,
+        r.acc,
+        r.desc,
+        formatNum(r.amt),
+        `${r.count}×`
+      ]),
+      startY: y + 2,
+      theme: "grid",
+      styles: { fontSize: 9, textColor, lineColor: primaryColor },
+      headStyles: { fillColor: primaryColor, textColor: "#fff" },
+      bodyStyles: { fillColor: secondaryColor },
+    });
+  }
+  y = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : y + 10;
+  
+  // ====== ADD CHARTS TO PDF ======
+  try {
+    const charts = [
+      { id: "pieChart", title: "Income vs Expense" },
+      { id: "barChart", title: "Monthly Totals" },
+      { id: "lineChart", title: "Balance Trend" }
+    ];
+    
+    charts.forEach((chart, index) => {
+      const canvas = document.getElementById(chart.id);
+      if (canvas) {
+        const imgData = canvas.toDataURL("image/png");
+        doc.addPage();
+        doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+        doc.text(chart.title, 14, 20);
+        doc.addImage(imgData, "PNG", 15, 30, 180, 90);
+      }
+    });
+  } catch (err) {
+    console.error("Chart export failed:", err);
+  }
+  
+  
   
   // ====== FOOTER ======
   doc.setFontSize(9).setTextColor("#777").setFont(undefined, "italic");
   doc.text("Generated by Vault Ledger App", 14, 290);
   
   // ====== SAVE ======
-  return isZip ? doc.output("arraybuffer")
-   : doc.save(`${ledgerName}_Summary.pdf`);
+  return isZip ? doc.output("arraybuffer") :
+    doc.save(`${ledgerName}_Summary.pdf`);
 }
 
 
@@ -1223,9 +1403,9 @@ async function downloadAllLedgers(dnFormat = document.getElementById("exportForm
           break;
         }
         case "summary": {
-           const pdfData = await exportSummaryPDF(true,parsed,ledgerName);
-           if(pdfData) folder.file(`${ledgerName}.pdf`, pdfData);
-           break;
+          const pdfData = await exportSummaryPDF(true, parsed, ledgerName);
+          if (pdfData) folder.file(`${ledgerName}.pdf`, pdfData);
+          break;
         };
         case "pdf": {
           const { jsPDF } = window.jspdf;
