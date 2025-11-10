@@ -1019,10 +1019,37 @@ async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = documen
   });
   let y = 45;
   
+  // ====== WEALTH INDICATOR ======
+  doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Wealth Indicator", 14, y);
+  y += 10;
+  
+  let wealthStatus = "Good financial health";
+  let wealthColor = "#4caf50"; // green
+  
+  if (netBalance < 0) {
+    wealthStatus = "Poor financial health";
+    wealthColor = "#f44336"; // red
+  } else if (netBalance < 1000) {
+    wealthStatus = "Needs improvement";
+    wealthColor = "#ff9800"; // orange
+  } else if (netBalance > 10000) {
+    wealthStatus = "Excellent financial health";
+    wealthColor = "#2196f3"; // blue
+  }
+  
+  doc.setFontSize(11).setTextColor(wealthColor).setFont(undefined, "bold");
+  doc.text(wealthStatus, 14, y);
+  y += 7;
+  
+  doc.setFontSize(11).setTextColor(textColor).setFont(undefined, "normal");
+  doc.text(`Balance: ₹${formatNum(netBalance)}`, 14, y);
+  y += 10;
+  
   // ====== Overall Totals ======
   doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
   doc.text("Overall Totals", 14, y);
-  y += 6;
+  y += 8;
   
   const overallData = [
     ["Type", "Amount (₹)"],
@@ -1298,7 +1325,53 @@ async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = documen
   }
   y = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : y + 10;
   
-  // ====== ADD CHARTS TO PDF ======
+  
+  // ====== SPECIAL INSIGHTS ======
+  y += 20;
+  
+  doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
+  doc.text("Special Insights", 14, y);
+  y += 8;
+  
+  // Find zero-spent days
+  const dates = [...new Set(ledger.map(t => t.date))];
+  const dateTotals = {};
+  ledger.forEach(t => {
+    if (!dateTotals[t.date]) dateTotals[t.date] = { income: 0, expense: 0 };
+    if (t.type === "income") dateTotals[t.date].income += t.amount;
+    else dateTotals[t.date].expense += t.amount;
+  });
+  const zeroSpentDays = dates.filter(d => dateTotals[d].expense === 0);
+  
+  const incomeRatio =
+    totalExpense > 0 ? ((totalIncome / totalExpense) * 100).toFixed(1) : "0.0";
+  
+  doc.setFontSize(11).setTextColor(textColor);
+  
+  const insights = [
+    `Income Ratio: ${incomeRatio}%`
+  ];
+  
+  insights.forEach(line => {
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+    doc.text(`• ${line}`, 16, y);
+    y += 7;
+  });
+  
+  y += 5;
+  doc.setDrawColor(primaryColor);
+  doc.line(15, y, 195, y);
+  y += 10;
+  
+  
+  
+  
+  
+  // ====== CHARTS SECTION (All in one page with correct aspect ratio) ======
+  
   try {
     const charts = [
       { id: "pieChart", title: "Income vs Expense" },
@@ -1306,21 +1379,45 @@ async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = documen
       { id: "lineChart", title: "Balance Trend" }
     ];
     
+    let chartY = y + 10;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const maxWidth = pageWidth - margin * 2;
+    
     charts.forEach((chart, index) => {
       const canvas = document.getElementById(chart.id);
       if (canvas) {
         const imgData = canvas.toDataURL("image/png");
-        doc.addPage();
-        doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
-        doc.text(chart.title, 14, 20);
-        doc.addImage(imgData, "PNG", 15, 30, 180, 90);
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const aspectRatio = imgHeight / imgWidth;
+        
+        // Scale width to fit page but preserve aspect ratio
+        const renderWidth = maxWidth;
+        const renderHeight = renderWidth * aspectRatio;
+        
+        // Title
+        doc.setFontSize(13)
+          .setTextColor(primaryColor)
+          .setFont(undefined, "bold");
+        doc.text(chart.title, pageWidth / 2, chartY, { align: "center" });
+        
+        chartY += 8;
+        
+        // Add chart image with proportional scaling
+        doc.addImage(imgData, "PNG", margin, chartY, renderWidth, renderHeight);
+        chartY += renderHeight + 10;
+        
+        // If near page bottom, add new page
+        if (chartY > 260 && index !== charts.length - 1) {
+          doc.addPage();
+          chartY = 20;
+        }
       }
     });
   } catch (err) {
     console.error("Chart export failed:", err);
   }
-  
-  
   
   // ====== FOOTER SECTION ======
   doc.addPage();
