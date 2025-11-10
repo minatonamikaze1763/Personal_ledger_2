@@ -1371,7 +1371,8 @@ async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = documen
   
   
   // ====== CHARTS SECTION (All in one page with correct aspect ratio) ======
-  
+  doc.addPage();
+
   try {
     const charts = [
       { id: "pieChart", title: "Income vs Expense" },
@@ -1379,7 +1380,7 @@ async function exportSummaryPDF(isZip, parsedData = ledger, ledgerName = documen
       { id: "lineChart", title: "Balance Trend" }
     ];
     
-    let chartY = y + 10;
+    let chartY = 10;
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 20;
     const maxWidth = pageWidth - margin * 2;
