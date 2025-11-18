@@ -609,17 +609,21 @@ ul {
 
 /* Responsive */
 @media (max-width: 768px) {
+  body {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
   .navbar {
     padding: 0.3rem 1.2rem;
-left: 1rem;
-right: 1rem;
+left: .8rem;
+right: .8rem;
 }
   .nav-links {
     display: none;
     flex-direction: column;
     background: var(--bg-color);
     position: absolute;
-    top: 80px;
+    top: 70px;
     right: 10px;
     width: 200px;
     border: 1px solid var(--border-color);
