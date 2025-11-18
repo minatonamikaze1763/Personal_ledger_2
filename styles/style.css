@@ -125,6 +125,7 @@ body {
   color: var(--text-color);
   padding: 20px;
   margin: 0 auto;
+  padding-top : 7rem;
   max-width: 950px;
   line-height: 1.3rem;
   font-family: "Google Sans Code", monospace;
@@ -455,9 +456,6 @@ tr:nth-child(even) {
 
 /* Responsive tweaks */
 @media (max-width: 600px) {
-  body {
-    padding: 10px;
-  }
   
   .theme-selector {
     max-width: 100%;
@@ -553,6 +551,10 @@ ul {
 
 /* Navbar base */
 .navbar {
+  position: fixed;
+  top: 0rem;
+  left: 2rem;
+  right: 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -566,6 +568,7 @@ ul {
   font-size: 1.2rem;
   font-weight: bold;
   color: var(--accent-color);
+  margin: 0;
 }
 
 .nav-links {
@@ -606,12 +609,17 @@ ul {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .navbar {
+    padding: 0.3rem 1.2rem;
+left: 1rem;
+right: 1rem;
+}
   .nav-links {
     display: none;
     flex-direction: column;
     background: var(--bg-color);
     position: absolute;
-    top: 60px;
+    top: 80px;
     right: 10px;
     width: 200px;
     border: 1px solid var(--border-color);
