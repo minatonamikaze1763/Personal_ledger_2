@@ -22,7 +22,7 @@ function getSetting(key, fallback) {
     "Bank", "Cash", "Accounts Receivable", "Fixed Assets", "Investments", "Prepaid Expenses", "Inventory", "Savings",
     "Accounts Payable", "Credit Card", "Loans", "Taxes Payable",
     "Capital", "Owner’s Equity", "Retained Earnings",
-    "Bonus", "Business Income", "Commission", "Interest Income", "Other Income", "Salary",
+    "Bonus", "Business Income", "Commission", "Interest", "Other Income", "Salary",
     "Bills", "Education", "Entertainment", "Food", "Healthcare", "Insurance", "Miscellaneous", "Rent", "Shopping",
     "Subscriptions", "Taxes", "Travel", "Utilities", "Business Partners", "Refunds", "Repairs & Maintenance", "Fuel",
     "Telecom", "Service Charges", "Family Support", "Vehicle", "Cash Reimbursement", "Household", "Bank Charges"
