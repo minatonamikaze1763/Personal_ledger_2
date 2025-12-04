@@ -55,7 +55,7 @@ const accounts = [
   "Bonus",
   "Business Income",
   "Commission",
-  "Interest Income",
+  "Interest",
   "Other Income",
   "Salary",
   'Incentive',
