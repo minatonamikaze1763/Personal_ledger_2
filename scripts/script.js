@@ -229,7 +229,7 @@ function renderTable(data = ledger, showRecurringOnly = false) {
           : '<span class="highlight">from Ledger: ' + entry.transferredFrom + '</span>') 
       : ''}
 </td>  
-<td>${entry.type}</td>
+ <td>${entry.type === 'expense' ? 'Debit' : 'Credit'}</td>
 <td class="${entry.type === 'expense' && 'expense-label'}">
   ${entry.type === 'expense' ? '-' + entry.amount.toFixed(2) : '-'}
 </td> 
