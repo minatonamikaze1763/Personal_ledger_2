@@ -39,7 +39,8 @@ const accounts = [
   "Prepaid Expenses",
   "Inventory",
   "Savings",
-  
+  "Office",
+
   // Liabilities
   "Accounts Payable",
   "Credit Card",
