@@ -165,7 +165,7 @@ function getClosingBalance(data) {
     return acc;
   }, 0);
 }
-
+/*
 function renderTable(data = ledger, showRecurringOnly = false) {
   const table = document.getElementById("tableBody");
   const balanceDiv = document.getElementById("balance");
@@ -255,7 +255,127 @@ ${ entry.type === 'income' ? '+' + entry.amount.toFixed(2) : '-' }
   refreshReports();
   renderBudgetPlan();
 }
-
+*/
+function renderTable(data = ledger, showRecurringOnly = false) {
+  const table = document.getElementById("tableBody");
+  const balanceDiv = document.getElementById("balance");
+  
+  const openingBalanceSpan = document.getElementById("openingBalance");
+  const totalIncomeSpan = document.getElementById("totalIncome");
+  const totalExpenseSpan = document.getElementById("totalExpense");
+  const finalBalanceSpan = document.getElementById("finalBalance");
+  
+  table.innerHTML = "";
+  
+  let openingBalance = 0;
+  let balance = 0;
+  let totalIncome = 0;
+  let totalExpense = 0;
+  
+  // ===== SORT DATA =====
+  const displayData = [...data].sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
+  
+  // ===== OPENING BALANCE INJECTION =====
+  if (isUsingFilter && displayData.length > 0) {
+    const ledgerSorted = [...ledger].sort(
+      (a, b) => new Date(a.date) - new Date(b.date)
+    );
+    
+    const firstLedgerDate = new Date(ledgerSorted[0].date);
+    const firstDisplayDate = new Date(displayData[0].date);
+    
+    if (firstDisplayDate > firstLedgerDate) {
+      const beforeRange = ledgerSorted.filter(
+        txn => new Date(txn.date) < firstDisplayDate
+      );
+      
+      openingBalance = getClosingBalance(beforeRange);
+      
+      displayData.unshift({
+        date: firstDisplayDate.toISOString().split("T")[0],
+        type: "opening",
+        desc: "Opening Balance",
+        amount: openingBalance,
+        account: "Balance Diff"
+      });
+    }
+  }
+  
+  // ===== RECURRING =====
+  const recurringIndices = getRecurringIndices(displayData);
+  
+  // ===== RENDER ROWS =====
+  displayData.forEach((entry, index) => {
+    const isRecurring = recurringIndices.has(index);
+    if (showRecurringOnly && !isRecurring) return;
+    
+    // ---- BALANCE LOGIC ----
+    if (entry.type === "opening") {
+      balance = entry.amount;
+      openingBalance = entry.amount;
+    } else if (entry.type === "income") {
+      balance += entry.amount;
+      totalIncome += entry.amount;
+    } else if (entry.type === "expense") {
+      balance -= entry.amount;
+      totalExpense += entry.amount;
+    }
+    
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${entry.date}</td>
+      <td>${entry.account}</td>
+      <td>
+        ${entry.desc}
+        ${isRecurring ? '<span class="recurring-badge">®</span>' : ''}
+        ${
+          entry.transactionType === "linked-transaction"
+            ? (entry.transferredFrom === currentLedgerKey
+                ? '<span class="highlight">to Ledger: ' + entry.transferredTo + '</span>'
+                : '<span class="highlight">from Ledger: ' + entry.transferredFrom + '</span>')
+            : ''
+        }
+      </td>
+      <td>
+        ${
+          entry.type === "opening"
+            ? "-"
+            : entry.type === "expense"
+            ? "Debit"
+            : "Credit"
+        }
+      </td>
+      <td class="${entry.type === "expense" ? "expense-label" : ""}">
+        ${entry.type === "expense" ? "-" + entry.amount.toFixed(2) : "-"}
+      </td>
+      <td class="${entry.type === "income" ? "income-label" : ""}">
+        ${entry.type === "income" ? "+" + entry.amount.toFixed(2) : "-"}
+      </td>
+      <td>${balance.toFixed(2)}</td>
+      <td class="actions">
+        <button onclick="editEntry('${entry.id}')">Edit</button>
+        <button class="delete-btn" onclick="deleteEntry('${entry.id}','${entry.desc}')">Delete</button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
+  
+  // ===== SUMMARY UI =====
+  openingBalanceSpan.textContent = openingBalance.toFixed(2);
+  totalIncomeSpan.textContent = totalIncome.toFixed(2);
+  totalExpenseSpan.textContent = totalExpense.toFixed(2);
+  finalBalanceSpan.textContent = balance.toFixed(2);
+  
+  balanceDiv.textContent = `Balance : ${currencySymbol}${balance.toFixed(2)}`;
+  
+  updateWealthLight(totalIncome, totalExpense);
+  showLowBalancePlan(balance);
+  refreshReports();
+  renderBudgetPlan();
+}
 function getRecurringIndices(data) {
   const ledgerKeyMap = {};
   
