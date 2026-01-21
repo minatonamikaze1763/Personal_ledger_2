@@ -376,6 +376,7 @@ function renderTable(data = ledger, showRecurringOnly = false) {
   refreshReports();
   renderBudgetPlan();
 }
+
 function getRecurringIndices(data) {
   const ledgerKeyMap = {};
   
@@ -1078,7 +1079,7 @@ async function exportToPDF() {
   
   // Reconciled closing balance
   const closingBalance =
-    openingBalance + totalCredit - totalDebit;
+   ( openingBalance + totalCredit) - totalDebit;
   
   // ===== SUMMARY =====
   doc.setFontSize(14).setTextColor(primaryColor).setFont(undefined, "bold");
