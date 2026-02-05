@@ -19,7 +19,11 @@ function getSetting(key, fallback) {
 }
   
   const accounts = [
-    "Bank", "Cash", "Accounts Receivable", "Fixed Assets", "Investments", "Prepaid Expenses", "Inventory", "Savings",
+    "Bank",
+    "Mutual funds", 
+    "Cash", 
+    
+    "Accounts Receivable", "Fixed Assets", "Investments", "Prepaid Expenses", "Inventory", "Savings",
     "Accounts Payable", "Credit Card", "Loans", "Taxes Payable",
     "Capital", "Owner’s Equity", "Retained Earnings",
     "Bonus", "Business Income", "Commission", "Interest", "Other Income", "Salary",
