@@ -33,6 +33,7 @@ const accounts = [
   // Assets
   "Bank",
   "Cash",
+  "Mutual Funds",
   "Accounts Receivable",
   "Fixed Assets",
   "Investments",
