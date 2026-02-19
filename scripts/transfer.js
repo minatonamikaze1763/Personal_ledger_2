@@ -20,6 +20,7 @@ function getSetting(key, fallback) {
   
   const accounts = [
     "Bank",
+    
     "Mutual funds", 
     "Cash", 
     
