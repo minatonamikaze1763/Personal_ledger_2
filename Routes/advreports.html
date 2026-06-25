@@ -579,7 +579,10 @@
           
         });
         
+        let totalIncome = 0;
+        let totalExpense = 0;
         
+        let closingBalance = openingBalance;
         
         addRow(
           "Opening Balance",
@@ -620,37 +623,59 @@
         
         
         
-        let closingBalance =
+        closingBalance =
           openingBalance;
         
         
         
         allTransactions.forEach(tx => {
+          const isCredit =
+            tx.type?.toLowerCase() === "income";
           
           const amount =
-            tx.type?.toLowerCase() ===
-            "income" ?
-            Number(tx.amount) :
-            -Number(tx.amount);
+            Number(tx.amount) || 0;
           
-          closingBalance += amount;
-          
-          
-          addRow(
-            `${tx.date} • ${tx.ledger} • ${tx.desc || "No Description"} • ${tx.type}`,
-            amount
-          );
+          if (isCredit) {
+            
+            totalIncome += amount;
+            closingBalance += amount;
+            
+            addRow(
+              `${tx.date} • ${tx.ledger} • ${tx.desc || "No Description"}`,
+              amount
+            );
+            
+          } else {
+            
+            totalExpense += amount;
+            closingBalance -= amount;
+            
+            addRow(
+              `${tx.date} • ${tx.ledger} • ${tx.description || "No Description"}`,
+              -amount
+            );
+            
+          }
           
         });
         
-        
-        
-        addRow(
-          "Closing Balance",
-          closingBalance
-        );
-        
-        
+        function addSummaryRow(title, amount) {
+          
+          const row =
+            document.createElement("tr");
+          
+          row.innerHTML = `
+        <td><strong>${title}</strong></td>
+        <td><strong>${amount.toFixed(2)}</strong></td>
+    `;
+          
+          reportTableBody.appendChild(row);
+          
+        }
+        addSummaryRow("Total Income", totalIncome);
+        addSummaryRow("Total Expense", -totalExpense);
+        addSummaryRow("Closing Balance", closingBalance);
+
         
         finalBalanceCell.textContent =
           closingBalance.toFixed(2);
