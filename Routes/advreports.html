@@ -635,8 +635,9 @@
           
           closingBalance += amount;
           
+          
           addRow(
-            `${tx.date} | ${tx.ledger} | ${tx.description || tx.note || tx.type}`,
+            `${tx.date} • ${tx.ledger} • ${tx.desc || "No Description"} • ${tx.type}`,
             amount
           );
           
