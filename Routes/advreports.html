@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Advanced Reports</title>
+  
+  <script src="../scripts/auth.js"></script>
+  
+  <link rel="stylesheet" href="../styles/style.css">
+  <link rel="stylesheet" href="../styles/reports.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <style>
+    .date-range-box {
+      display: none;
+      margin-top: 15px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .date-range-box input {
+      padding: 10px;
+    }
+    
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    .report-table th,
+    .report-table td {
+      padding: 12px;
+      border: 1px solid var(--border-color, #ccc);
+    }
+    
+    .opening-row {
+      font-weight: bold;
+    }
+    
+    .closing-row {
+      font-weight: bold;
+    }
+  </style>
+  
+</head>
+
+<body>
+  
+  <nav class="navbar">
+    <h1 class="nav-brand">Vault Ledger</h1>
+    
+    <button class="hamburger" id="hamburger">
+      ☰
+    </button>
+    
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../Routes/docs.html">Docs</a></li>
+      <li><a href="../Routes/reports.html">Reports</a></li>
+      <li><a href="advreports.html" class="active">Adv Reports</a></li>
+      <li><a href="../Routes/transfer.html">Transfer</a></li>
+      <li><a href="../Routes/accounts.html" class="">Accounts</a></li>
+      <li><a href="../Routes/settings.html" class="">Settings</a></li>
+    </ul>
+  </nav>
+  <div class="theme-selector" style="display: none;">
+    <label for="themeSelect">🎨 Theme:</label>
+    <select id="themeSelect">
+      <option value="light">🌞 Light</option>
+      <option value="dark">🌙 Dark</option>
+      <option value="blue">🔵 Blue</option>
+      <option value="green">🟢 Green</option>
+      <option value="sunset">🌅 Sunset</option>
+      <option value="neon">💡 Neon</option>
+      <option value="pastel">🎨 Pastel</option>
+      <option value="coffee">☕ Coffee</option>
+      <option value="solarized">🌐 Solarized</option>
+      <option value="purple">💜 Purple</option>
+      <option value="mono">⚪ Mono</option>
+      <option value="gradient">🌈 Gradient</option>
+      <option value="rose">🌹 Rose</option>
+      <option value="aqua">💧 Aqua</option>
+      <option value="forest">🌲 Forest</option>
+      <option value="gold">🥇 Gold</option>
+      <option value="silver">🥈 Silver</option>
+      <option value="crimson">❤️ Crimson</option>
+      <option value="indigo">🔮 Indigo</option>
+      <option value="cyberpunk">⚡ Cyberpunk</option>
+    </select>
+  </div>
+  
+  <main class="report-main">
+    
+    <h1 class="report-title">
+      <i class="fa-solid fa-chart-column"></i>
+      Advanced Reports
+    </h1>
+    
+    <section class="report-filter">
+      
+      <h3>
+        <i class="fa-solid fa-filter"></i>
+        Ledger Filter
+      </h3>
+      
+      <div class="report-filter-options">
+        
+        <label>
+          <input type="radio" name="ledgerMode" value="all" checked>
+          All
+        </label>
+        
+        <label>
+          <input type="radio" name="ledgerMode" value="custom">
+          Custom
+        </label>
+        
+        <label>
+          <input type="radio" name="ledgerMode" value="exclude">
+          Exclude Some
+        </label>
+        
+      </div>
+      
+      <select id="includeLedgers" multiple style="display:none;">
+      </select>
+      
+      <select id="excludeLedgers" multiple style="display:none;">
+      </select>
+      
+      <hr>
+      
+      <h3>
+        <i class="fa-solid fa-file-lines"></i>
+        Report Type
+      </h3>
+      
+      <div class="report-filter-options">
+        
+        <label>
+          <input type="radio" name="reportType" value="summary" checked>
+          Ledger Balance
+        </label>
+        
+        <label>
+          <input type="radio" name="reportType" value="statement">
+          Date Range Statement
+        </label>
+        
+      </div>
+      
+      <div class="date-range-box" id="dateRangeBox">
+        
+        <input type="date" id="startDate">
+        
+        <input type="date" id="endDate">
+        
+      </div>
+      
+      <br>
+      
+      <button id="generateReport" class="report-btn">
+      
+        <i class="fa-solid fa-table"></i>
+        Generate Report
+        
+      </button>
+      
+    </section>
+    
+    <section class="report-table-section">
+      
+      <table class="report-table" id="reportTable">
+        
+        <thead>
+          
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+          </tr>
+          
+        </thead>
+        
+        <tbody>
+          
+        </tbody>
+        
+        <tfoot>
+          
+          <tr>
+            <td>
+              <strong>Closing Balance</strong>
+            </td>
+            
+            <td id="finalBalance">
+              0.00
+            </td>
+            
+          </tr>
+          
+        </tfoot>
+        
+      </table>
+      
+    </section>
+    
+    <button id="downloadPngBtn" class="export-btn">
+    
+      <i class="fa-solid fa-image"></i>
+      Download as PNG
+      
+    </button>
+    
+  </main>
+  
+  <script src="../scripts/utilitys.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    document.addEventListener("DOMContentLoaded", () => {
+      
+      const includeSelect = document.getElementById("includeLedgers");
+      const excludeSelect = document.getElementById("excludeLedgers");
+      
+      const reportTableBody =
+        document.querySelector("#reportTable tbody");
+      
+      const finalBalanceCell =
+        document.getElementById("finalBalance");
+      
+      const generateBtn =
+        document.getElementById("generateReport");
+      
+      const dateRangeBox =
+        document.getElementById("dateRangeBox");
+      
+      const startDateInput =
+        document.getElementById("startDate");
+      
+      const endDateInput =
+        document.getElementById("endDate");
+      
+      let ledgers =
+        JSON.parse(
+          localStorage.getItem("ledgers") || "[]"
+        );
+      
+      
+      
+      // =========================
+      // Populate Dropdowns
+      // =========================
+      
+      function populateDropdowns() {
+        
+        includeSelect.innerHTML = "";
+        excludeSelect.innerHTML = "";
+        
+        ledgers.forEach(ledger => {
+          
+          includeSelect.add(
+            new Option(ledger, ledger)
+          );
+          
+          excludeSelect.add(
+            new Option(ledger, ledger)
+          );
+          
+        });
+        
+      }
+      
+      populateDropdowns();
+      
+      
+      
+      // =========================
+      // Ledger Filter Toggle
+      // =========================
+      
+      document
+        .querySelectorAll("input[name='ledgerMode']")
+        .forEach(radio => {
+          
+          radio.addEventListener("change", () => {
+            
+            const mode =
+              document.querySelector(
+                "input[name='ledgerMode']:checked"
+              ).value;
+            
+            includeSelect.style.display = "none";
+            excludeSelect.style.display = "none";
+            
+            if (mode === "custom") {
+              includeSelect.style.display = "block";
+            }
+            
+            if (mode === "exclude") {
+              excludeSelect.style.display = "block";
+            }
+            
+          });
+          
+        });
+      
+      
+      
+      // =========================
+      // Report Type Toggle
+      // =========================
+      
+      document
+        .querySelectorAll("input[name='reportType']")
+        .forEach(radio => {
+          
+          radio.addEventListener("change", () => {
+            
+            const type =
+              document.querySelector(
+                "input[name='reportType']:checked"
+              ).value;
+            
+            if (type === "statement") {
+              dateRangeBox.style.display = "flex";
+            } else {
+              dateRangeBox.style.display = "none";
+            }
+            
+          });
+          
+        });
+      
+      
+      
+      // =========================
+      // Get Selected Ledgers
+      // =========================
+      
+      function getSelectedLedgers() {
+        
+        const mode =
+          document.querySelector(
+            "input[name='ledgerMode']:checked"
+          ).value;
+        
+        let selected = [...ledgers];
+        
+        if (mode === "custom") {
+          
+          selected =
+            Array.from(
+              includeSelect.selectedOptions
+            ).map(o => o.value);
+          
+        }
+        
+        if (mode === "exclude") {
+          
+          const excluded =
+            Array.from(
+              excludeSelect.selectedOptions
+            ).map(o => o.value);
+          
+          selected =
+            ledgers.filter(
+              l => !excluded.includes(l)
+            );
+          
+        }
+        
+        return selected;
+        
+      }
+      
+      
+      
+      // =========================
+      // Opening Balance
+      // =========================
+      
+      function getOpeningBalance(
+        ledgerName,
+        startDate
+      ) {
+        
+        const txs =
+          JSON.parse(
+            localStorage.getItem(ledgerName) || "[]"
+          );
+        
+        let balance = 0;
+        
+        txs.forEach(tx => {
+          
+          if (
+            new Date(tx.date) <
+            new Date(startDate)
+          ) {
+            
+            const amount =
+              Number(tx.amount) || 0;
+            
+            if (
+              tx.type?.toLowerCase() ===
+              "income"
+            ) {
+              balance += amount;
+            }
+            else {
+              balance -= amount;
+            }
+            
+          }
+          
+        });
+        
+        return balance;
+        
+      }
+      
+      
+      
+      // =========================
+      // Transactions In Range
+      // =========================
+      
+      function getTransactionsInRange(
+        ledgerName,
+        startDate,
+        endDate
+      ) {
+        
+        const txs =
+          JSON.parse(
+            localStorage.getItem(ledgerName) || "[]"
+          );
+        
+        return txs.filter(tx => {
+          
+          const d =
+            new Date(tx.date);
+          
+          return (
+            d >= new Date(startDate) &&
+            d <= new Date(endDate)
+          );
+          
+        });
+        
+      }
+      
+      
+      
+      // =========================
+      // Add Row
+      // =========================
+      
+      function addRow(
+        description,
+        amount
+      ) {
+        
+        const row =
+          document.createElement("tr");
+        
+        row.innerHTML = `
+            <td>${description}</td>
+            <td>${amount.toFixed(2)}</td>
+        `;
+        
+        reportTableBody.appendChild(row);
+        
+      }
+      
+      
+      
+      // =========================
+      // Balance Summary Report
+      // =========================
+      
+      function generateSummary() {
+        
+        reportTableBody.innerHTML = "";
+        
+        let total = 0;
+        
+        const selectedLedgers =
+          getSelectedLedgers();
+        
+        selectedLedgers.forEach(ledger => {
+          
+          const txs =
+            JSON.parse(
+              localStorage.getItem(ledger) || "[]"
+            );
+          
+          let balance = 0;
+          
+          txs.forEach(tx => {
+            
+            const amount =
+              Number(tx.amount) || 0;
+            
+            if (
+              tx.type?.toLowerCase() ===
+              "income"
+            ) {
+              balance += amount;
+            }
+            else {
+              balance -= amount;
+            }
+            
+          });
+          
+          total += balance;
+          
+          addRow(
+            ledger,
+            balance
+          );
+          
+        });
+        
+        finalBalanceCell.textContent =
+          total.toFixed(2);
+        
+      }
+      
+      
+      
+      // =========================
+      // Date Statement Report
+      // =========================
+      
+      function generateStatement() {
+        
+        reportTableBody.innerHTML = "";
+        
+        const startDate =
+          startDateInput.value;
+        
+        const endDate =
+          endDateInput.value;
+        
+        if (
+          !startDate ||
+          !endDate
+        ) {
+          
+          alert(
+            "Select Start Date and End Date"
+          );
+          
+          return;
+          
+        }
+        
+        const selectedLedgers =
+          getSelectedLedgers();
+        
+        
+        
+        let openingBalance = 0;
+        
+        selectedLedgers.forEach(ledger => {
+          
+          openingBalance +=
+            getOpeningBalance(
+              ledger,
+              startDate
+            );
+          
+        });
+        
+        
+        
+        addRow(
+          "Opening Balance",
+          openingBalance
+        );
+        
+        
+        
+        let allTransactions = [];
+        
+        selectedLedgers.forEach(ledger => {
+          
+          const txs =
+            getTransactionsInRange(
+              ledger,
+              startDate,
+              endDate
+            );
+          
+          txs.forEach(tx => {
+            
+            allTransactions.push({
+              ledger,
+              ...tx
+            });
+            
+          });
+          
+        });
+        
+        
+        
+        allTransactions.sort(
+          (a, b) =>
+          new Date(a.date) -
+          new Date(b.date)
+        );
+        
+        
+        
+        let closingBalance =
+          openingBalance;
+        
+        
+        
+        allTransactions.forEach(tx => {
+          
+          const amount =
+            tx.type?.toLowerCase() ===
+            "income" ?
+            Number(tx.amount) :
+            -Number(tx.amount);
+          
+          closingBalance += amount;
+          
+          addRow(
+            `${tx.date} | ${tx.ledger} | ${tx.description || tx.note || tx.type}`,
+            amount
+          );
+          
+        });
+        
+        
+        
+        addRow(
+          "Closing Balance",
+          closingBalance
+        );
+        
+        
+        
+        finalBalanceCell.textContent =
+          closingBalance.toFixed(2);
+        
+      }
+      
+      
+      
+      // =========================
+      // Generate Button
+      // =========================
+      
+      generateBtn.addEventListener(
+        "click",
+        () => {
+          
+          const reportType =
+            document.querySelector(
+              "input[name='reportType']:checked"
+            ).value;
+          
+          if (
+            reportType === "summary"
+          ) {
+            generateSummary();
+          }
+          else {
+            generateStatement();
+          }
+          
+        }
+      );
+      
+      
+      
+      // =========================
+      // Download PNG
+      // =========================
+      
+      document
+        .getElementById("downloadPngBtn")
+        .addEventListener(
+          "click",
+          () => {
+            
+            const table =
+              document.getElementById(
+                "reportTable"
+              );
+            
+            html2canvas(
+              table, { scale: 2 }
+            ).then(canvas => {
+              
+              const link =
+                document.createElement("a");
+              
+              link.download =
+                "advanced-report.png";
+              
+              link.href =
+                canvas.toDataURL(
+                  "image/png"
+                );
+              
+              link.click();
+              
+            });
+            
+          }
+        );
+      
+    });
+  </script>
+</body>
+
+</html>
