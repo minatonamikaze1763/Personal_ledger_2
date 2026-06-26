@@ -11,11 +11,11 @@
   
   <link rel="stylesheet" href="../styles/style.css">
   <link rel="stylesheet" href="../styles/reports.css">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
   <style>
     .date-range-box {
       display: none;
@@ -217,7 +217,10 @@
       Download as PNG
       
     </button>
-    
+    <button id="downloadPdfBtn" class="export-btn">
+      <i class="fa-solid fa-file-pdf"></i>
+      Download as PDF
+    </button>
   </main>
   
   <script src="../scripts/utilitys.js"></script>
@@ -754,6 +757,151 @@
         );
       
     });
+    /*
+    const pdf = new window.jspdf.jsPDF();
+    document
+      .getElementById("downloadPdfBtn")
+      .addEventListener("click", async () => {
+        
+        try {
+          
+          const table =
+            document.getElementById("reportTable");
+          
+          const canvas =
+            await html2canvas(table, {
+              scale: 2
+            });
+          
+          const imgData =
+            canvas.toDataURL("image/png");
+          
+          const pdf =
+            new window.jspdf.jsPDF();
+          const margin = 15;
+          
+          const imgWidth = 210 - (margin * 2);
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          
+          const pageHeight = 297;
+          let position = margin;
+          let heightLeft = imgHeight;
+          
+          pdf.addImage(
+            imgData,
+            "PNG",
+            margin,
+            position,
+            imgWidth,
+            imgHeight
+          );
+          
+          heightLeft -= (pageHeight - margin * 2);
+          
+          while (heightLeft > 0) {
+            
+            position = -(imgHeight - heightLeft) + margin;
+            
+            pdf.addPage();
+            
+            pdf.addImage(
+              imgData,
+              "PNG",
+              margin,
+              position,
+              imgWidth,
+              imgHeight
+            );
+            
+            heightLeft -= (pageHeight - margin * 2);
+          }
+          pdf.save("report.pdf");
+          
+          console.log("PDF Saved");
+          
+        } catch (err) {
+          
+          console.error("PDF Error:", err);
+          alert(err.message);
+          
+        }
+        
+      });*/
+    document
+      .getElementById("downloadPdfBtn")
+      .addEventListener("click", () => {
+        
+        const pdf =
+          new window.jspdf.jsPDF(
+            "p",
+            "mm",
+            "a4"
+          );
+        
+        const rows = [];
+        
+        document
+          .querySelectorAll("#reportTable tbody tr")
+          .forEach(row => {
+            
+            const cols =
+              row.querySelectorAll("td");
+            
+            rows.push([
+              cols[0]?.innerText || "",
+              cols[1]?.innerText || ""
+            ]);
+            
+          });
+        
+        const footerRow = [
+          "Closing Balance",
+          document.getElementById(
+            "finalBalance"
+          ).innerText
+        ];
+        
+        pdf.text(
+          "Advanced Report",
+          14,
+          15
+        );
+        
+        pdf.autoTable({
+          
+          head: [
+            [
+              "Description",
+              "Amount"
+            ]
+          ],
+          
+          body: rows,
+          
+          foot: [footerRow],
+          
+          startY: 25,
+          
+          margin: {
+            top: 15,
+            bottom: 15
+          },
+          
+          showFoot: "lastPage",
+          
+          theme: "grid",
+          
+          styles: {
+            fontSize: 9
+          }
+          
+        });
+        
+        pdf.save(
+          "advanced-report.pdf"
+        );
+        
+      });
   </script>
 </body>
 
