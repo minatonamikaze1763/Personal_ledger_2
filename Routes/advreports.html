@@ -172,7 +172,16 @@
         Generate Report
         
       </button>
+      <button id="downloadPngBtn" class="export-btn">
       
+        <i class="fa-solid fa-image"></i>
+        Download as PNG
+        
+      </button>
+      <button id="downloadPdfBtn" class="export-btn">
+        <i class="fa-solid fa-file-pdf"></i>
+        Download as PDF
+      </button>
     </section>
     
     <section class="report-table-section">
@@ -211,16 +220,7 @@
       
     </section>
     
-    <button id="downloadPngBtn" class="export-btn">
     
-      <i class="fa-solid fa-image"></i>
-      Download as PNG
-      
-    </button>
-    <button id="downloadPdfBtn" class="export-btn">
-      <i class="fa-solid fa-file-pdf"></i>
-      Download as PDF
-    </button>
   </main>
   
   <script src="../scripts/utilitys.js"></script>
@@ -758,7 +758,7 @@
         );
       
     });
-
+    
     document
       .getElementById("downloadPdfBtn")
       .addEventListener("click", () => {
@@ -844,18 +844,18 @@
         
         const rows = [];
         
+        let rowNumber = 1;
+        
         document
-          .querySelectorAll(
-            "#reportTable tbody tr"
-          )
+          .querySelectorAll("#reportTable tbody tr")
           .forEach(row => {
             
-            const cols =
-              row.querySelectorAll("td");
+            const cols = row.querySelectorAll("td");
             
             if (cols.length >= 2) {
               
               rows.push([
+                rowNumber++,
                 cols[0].innerText,
                 cols[1].innerText
               ]);
@@ -863,7 +863,6 @@
             }
             
           });
-        
         let openingBalance = "0.00";
         let totalIncome = "0.00";
         let totalExpense = "0.00";
@@ -881,27 +880,24 @@
         if (reportType === "statement") {
           
           openingBalance =
-            rows[0]?.[1] || "0.00";
-          
+            rows[0]?.[2] || "0.00";
           const summaryRows =
             rows.slice(-4);
           
           totalIncome =
-            summaryRows[0]?.[1] || "0.00";
+            summaryRows[0]?.[2] || "0.00";
           
           totalExpense =
-            summaryRows[1]?.[1] || "0.00";
+            summaryRows[1]?.[2] || "0.00";
           
           closingBalance =
-            summaryRows[2]?.[1] || "0.00";
+            summaryRows[2]?.[2] || "0.00";
           
           extraLabel =
-            summaryRows[3]?.[0] ||
-            "Extra Income";
+            summaryRows[3]?.[1] || "Extra Income";
           
           extraAmount =
-            summaryRows[3]?.[1] || "0.00";
-          
+            summaryRows[3]?.[2] || "0.00";
           rows.splice(-4);
         }
         
@@ -910,6 +906,7 @@
           {
             head: [
               [
+                "Sl.No",
                 "Description",
                 "Amount"
               ]
