@@ -235,6 +235,12 @@
       
       const finalBalanceCell =
         document.getElementById("finalBalance");
+      const startDateInput =
+        document.getElementById("startDate");
+      
+      const endDateInput =
+        document.getElementById("endDate");
+      
       
       const generateBtn =
         document.getElementById("generateReport");
@@ -242,11 +248,6 @@
       const dateRangeBox =
         document.getElementById("dateRangeBox");
       
-      const startDateInput =
-        document.getElementById("startDate");
-      
-      const endDateInput =
-        document.getElementById("endDate");
       
       let ledgers =
         JSON.parse(
@@ -757,79 +758,15 @@
         );
       
     });
-    /*
-    const pdf = new window.jspdf.jsPDF();
-    document
-      .getElementById("downloadPdfBtn")
-      .addEventListener("click", async () => {
-        
-        try {
-          
-          const table =
-            document.getElementById("reportTable");
-          
-          const canvas =
-            await html2canvas(table, {
-              scale: 2
-            });
-          
-          const imgData =
-            canvas.toDataURL("image/png");
-          
-          const pdf =
-            new window.jspdf.jsPDF();
-          const margin = 15;
-          
-          const imgWidth = 210 - (margin * 2);
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          
-          const pageHeight = 297;
-          let position = margin;
-          let heightLeft = imgHeight;
-          
-          pdf.addImage(
-            imgData,
-            "PNG",
-            margin,
-            position,
-            imgWidth,
-            imgHeight
-          );
-          
-          heightLeft -= (pageHeight - margin * 2);
-          
-          while (heightLeft > 0) {
-            
-            position = -(imgHeight - heightLeft) + margin;
-            
-            pdf.addPage();
-            
-            pdf.addImage(
-              imgData,
-              "PNG",
-              margin,
-              position,
-              imgWidth,
-              imgHeight
-            );
-            
-            heightLeft -= (pageHeight - margin * 2);
-          }
-          pdf.save("report.pdf");
-          
-          console.log("PDF Saved");
-          
-        } catch (err) {
-          
-          console.error("PDF Error:", err);
-          alert(err.message);
-          
-        }
-        
-      });*/
+
     document
       .getElementById("downloadPdfBtn")
       .addEventListener("click", () => {
+        const startDateInput =
+          document.getElementById("startDate");
+        
+        const endDateInput =
+          document.getElementById("endDate");
         
         const pdf =
           new window.jspdf.jsPDF(
@@ -838,69 +775,253 @@
             "a4"
           );
         
+        const reportType =
+          document.querySelector(
+            "input[name='reportType']:checked"
+          ).value;
+        
+        const now =
+          new Date();
+        
+        let y = 15;
+        
+        pdf.setFontSize(18);
+        pdf.text(
+          "Advanced Report",
+          14,
+          y
+        );
+        
+        y += 10;
+        
+        pdf.setFontSize(11);
+        
+        if (reportType === "statement") {
+          
+          pdf.text(
+            "Report Type: Date Range Statement",
+            14,
+            y
+          );
+          
+          y += 7;
+          
+          pdf.text(
+            `From: ${startDateInput.value}`,
+            14,
+            y
+          );
+          
+          y += 7;
+          
+          pdf.text(
+            `To: ${endDateInput.value}`,
+            14,
+            y
+          );
+          
+          y += 7;
+          
+        } else {
+          
+          pdf.text(
+            "Report Type: Ledger Balance",
+            14,
+            y
+          );
+          
+          y += 7;
+          
+        }
+        
+        pdf.text(
+          `Generated On: ${now.toLocaleString()}`,
+          14,
+          y
+        );
+        
+        y += 10;
+        
         const rows = [];
         
         document
-          .querySelectorAll("#reportTable tbody tr")
+          .querySelectorAll(
+            "#reportTable tbody tr"
+          )
           .forEach(row => {
             
             const cols =
               row.querySelectorAll("td");
             
-            rows.push([
-              cols[0]?.innerText || "",
-              cols[1]?.innerText || ""
-            ]);
+            if (cols.length >= 2) {
+              
+              rows.push([
+                cols[0].innerText,
+                cols[1].innerText
+              ]);
+              
+            }
             
           });
         
-        const footerRow = [
-          "Closing Balance",
+        let openingBalance = "0.00";
+        let totalIncome = "0.00";
+        let totalExpense = "0.00";
+        let closingBalance =
           document.getElementById(
             "finalBalance"
-          ).innerText
-        ];
+          ).innerText;
         
-        pdf.text(
-          "Advanced Report",
-          14,
-          15
+        let extraLabel =
+          "Extra Income";
+        
+        let extraAmount =
+          "0.00";
+        
+        if (reportType === "statement") {
+          
+          openingBalance =
+            rows[0]?.[1] || "0.00";
+          
+          const summaryRows =
+            rows.slice(-4);
+          
+          totalIncome =
+            summaryRows[0]?.[1] || "0.00";
+          
+          totalExpense =
+            summaryRows[1]?.[1] || "0.00";
+          
+          closingBalance =
+            summaryRows[2]?.[1] || "0.00";
+          
+          extraLabel =
+            summaryRows[3]?.[0] ||
+            "Extra Income";
+          
+          extraAmount =
+            summaryRows[3]?.[1] || "0.00";
+          
+          rows.splice(-4);
+        }
+        
+        pdf.autoTable(
+          
+          {
+            head: [
+              [
+                "Description",
+                "Amount"
+              ]
+            ],
+            
+            body: rows,
+            
+            startY: y,
+            
+            theme: "grid",
+            
+            margin: {
+              top: 15,
+              bottom: 20,
+              left: 10,
+              right: 10
+            },
+            
+            styles: {
+              fontSize: 9,
+              cellPadding: 3
+            },
+            
+            headStyles: {
+              fillColor: [
+                156,
+                39,
+                176
+              ]
+            },
+            
+            didDrawPage: function(data) {
+              
+              pdf.setFontSize(10);
+              
+              pdf.text(
+                `Page ${data.pageNumber}`,
+                pdf.internal.pageSize.width - 30,
+                pdf.internal.pageSize.height - 8
+              );
+              
+            }
+            
+          }
         );
         
-        pdf.autoTable({
+        if (reportType === "statement") {
           
-          head: [
-            [
-              "Description",
-              "Amount"
-            ]
-          ],
+          const summaryStartY =
+            pdf.lastAutoTable.finalY + 10;
           
-          body: rows,
+          pdf.autoTable(
+          {
+            startY: summaryStartY,
+            
+            head: [
+              [
+                "Summary",
+                "Amount"
+              ]
+            ],
+            
+            body: [
+              
+              [
+                "Opening Balance",
+                openingBalance
+              ],
+              
+              [
+                "Total Income",
+                totalIncome
+              ],
+              
+              [
+                "Total Expense",
+                totalExpense
+              ],
+              
+              [
+                "Closing Balance",
+                closingBalance
+              ],
+              
+              [
+                extraLabel,
+                extraAmount
+              ]
+              
+            ],
+            
+            theme: "grid",
+            
+            styles: {
+              fontStyle: "bold"
+            },
+            
+            headStyles: {
+              fillColor: [
+                76,
+                175,
+                80
+              ]
+            }
+            
+          });
           
-          foot: [footerRow],
-          
-          startY: 25,
-          
-          margin: {
-            top: 15,
-            bottom: 15
-          },
-          
-          showFoot: "lastPage",
-          
-          theme: "grid",
-          
-          styles: {
-            fontSize: 9
-          }
-          
-        });
+        }
         
         pdf.save(
           "advanced-report.pdf"
         );
-        
       });
   </script>
 </body>
