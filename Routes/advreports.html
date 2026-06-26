@@ -641,7 +641,7 @@
             closingBalance += amount;
             
             addRow(
-              `${tx.date} • ${tx.ledger} • ${tx.desc || "No Description"} • Income`,
+              `${tx.date} • ${tx.ledger} •  ${tx.account} • ${tx.desc || "No Description"} • Income`,
               amount
             );
             
@@ -651,7 +651,7 @@
             closingBalance -= amount;
             
             addRow(
-              `${tx.date} • ${tx.ledger} • ${tx.desc || "No Description"} • Expense`,
+              `${tx.date} • ${tx.ledger} •  ${tx.account} • ${tx.desc || "No Description"} • Expense`,
               -amount
             );
             
