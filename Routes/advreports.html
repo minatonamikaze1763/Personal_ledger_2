@@ -675,8 +675,12 @@
         addSummaryRow("Total Income", totalIncome);
         addSummaryRow("Total Expense", -totalExpense);
         addSummaryRow("Closing Balance", closingBalance);
-        addSummaryRow("Difference", closingBalance - openingBalance);
-
+        const difference = closingBalance - openingBalance;
+        
+        addSummaryRow(
+          difference < 0 ? "Extra Expense" : "Extra Income",
+          difference
+        );
         
         finalBalanceCell.textContent =
           closingBalance.toFixed(2);
